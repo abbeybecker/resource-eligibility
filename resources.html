@@ -1,0 +1,2357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local Resource Eligibility Finder — PA / DE / MD / NJ / VA / DC</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Fraunces:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F7F5F0;
+  --surface: #FFFFFF;
+  --surface-alt: #F0EDE6;
+  --border: #E2DDD4;
+  --text: #1A1A1A;
+  --text-secondary: #5C5548;
+  --text-muted: #8C8378;
+  --accent: #2D5F3F;
+  --accent-light: #E8F0EB;
+  --accent-hover: #1E4A2E;
+  --yes: #2D5F3F;
+  --yes-bg: #E8F0EB;
+  --maybe: #7A6321;
+  --maybe-bg: #F5F0E0;
+  --no: #9C8B7A;
+  --no-bg: #F5F2ED;
+  --purple: #5B3E7C;
+  --purple-bg: #F0EAF5;
+  --red-warm: #8B3A3A;
+  --red-bg: #F5EAEA;
+  --blue: #2E5A7C;
+  --blue-bg: #E8EFF5;
+  --orange: #8B5E2F;
+  --orange-bg: #F5EFE5;
+  --radius: 10px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.1);
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+.header {
+  background: var(--accent);
+  color: white;
+  padding: 1.5rem 1.5rem 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+.header-inner { position: relative; z-index: 1; display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.header h1 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.header p { opacity: 0.85; font-size: 0.9rem; margin-top: 0.25rem; }
+.header .tag { display: inline-block; background: rgba(255,255,255,0.15); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; margin-top: 0.5rem; font-weight: 500; }
+.nav-tabs { display: flex; gap: 0.25rem; }
+.nav-tab {
+  display: inline-block;
+  padding: 0.5rem 0.9rem;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.18);
+  transition: background 0.15s;
+}
+.nav-tab:hover { background: rgba(255,255,255,0.2); }
+.nav-tab.active { background: white; color: var(--accent); border-color: white; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.intake-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 1rem;
+  align-self: start;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+}
+.panel-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+.panel-sub { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem; }
+
+.field-group { margin-bottom: 1rem; }
+.field-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+}
+.field-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+.input, .select {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input:focus, .select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+
+.inline-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+
+.check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem 0.6rem; }
+.check-grid.cols-1 { grid-template-columns: 1fr; }
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.4rem;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  line-height: 1.3;
+}
+.check-item:hover { background: var(--surface-alt); }
+.check-item input { margin-top: 0.18rem; accent-color: var(--accent); cursor: pointer; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary { background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--border); }
+.btn-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.btn-full { width: 100%; }
+
+.results-panel { min-width: 0; }
+
+.fpl-strip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.9rem;
+}
+.fpl-stat .l { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600; }
+.fpl-stat .v { font-family: 'Fraunces', Georgia, serif; font-size: 1.35rem; font-weight: 700; color: var(--text); margin-top: 0.15rem; }
+.fpl-stat .v.accent { color: var(--accent); }
+.fpl-stat .v.warn { color: var(--maybe); }
+.fpl-stat .s { font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.1rem; }
+
+.filter-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.75rem; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+}
+.chip:hover { border-color: var(--accent); color: var(--text); }
+.chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+.chip .count { font-size: 0.72rem; opacity: 0.85; margin-left: 0.15rem; }
+
+.results-bar {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  padding: 0 0.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.results-bar .toggle-no { font-size: 0.8rem; color: var(--text-muted); cursor: pointer; user-select: none; }
+.results-bar .toggle-no:hover { color: var(--accent); }
+
+.group-heading {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 1rem 0 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.group-heading .pill {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+}
+.group-heading.yes .pill { background: var(--yes-bg); color: var(--yes); }
+.group-heading.maybe .pill { background: var(--maybe-bg); color: var(--maybe); }
+.group-heading.no .pill { background: var(--no-bg); color: var(--no); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 0.6rem;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.card.yes { border-left: 4px solid var(--yes); }
+.card.maybe { border-left: 4px solid var(--maybe); }
+.card.no { border-left: 4px solid var(--no); opacity: 0.8; }
+
+.card-header {
+  padding: 0.8rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+.card-header:hover { background: var(--surface-alt); }
+.card-title-row { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; min-width: 0; }
+.card-title { font-weight: 700; font-size: 0.98rem; color: var(--text); }
+.card-category { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: var(--text-muted); }
+.card-verdict {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.18rem 0.55rem;
+  border-radius: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.card-verdict.yes { background: var(--yes-bg); color: var(--yes); }
+.card-verdict.maybe { background: var(--maybe-bg); color: var(--maybe); }
+.card-verdict.no { background: var(--no-bg); color: var(--no); }
+.card-reasons { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem; }
+.expand-arrow { color: var(--text-muted); font-size: 0.9rem; transition: transform 0.2s; flex-shrink: 0; }
+.card.open .expand-arrow { transform: rotate(180deg); }
+
+.card-body {
+  display: none;
+  padding: 0 1rem 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.8rem;
+}
+.card.open .card-body { display: block; }
+
+.card-row { margin-bottom: 0.55rem; }
+.card-row .l {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.15rem;
+}
+.card-row .v { font-size: 0.88rem; color: var(--text); }
+.card-contact {
+  background: var(--surface-alt);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+}
+.contact-row { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; padding: 0.15rem 0; }
+.contact-row a { color: var(--accent); text-decoration: none; font-weight: 500; word-break: break-all; }
+.contact-row a:hover { text-decoration: underline; }
+.contact-label { font-size: 0.78rem; color: var(--text-muted); flex-shrink: 0; }
+
+.county-panel {
+  background: var(--blue-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+  margin-bottom: 0.75rem;
+}
+.county-panel h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--blue);
+}
+.county-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.5rem 0.75rem; font-size: 0.85rem; }
+.county-grid .contact-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: rgba(255,255,255,0.6);
+  padding: 0.45rem 0.6rem;
+  border-radius: 6px;
+  gap: 0.15rem;
+}
+.county-grid .contact-row .contact-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  white-space: normal;
+  line-height: 1.3;
+}
+.county-grid .contact-row a {
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.empty-state {
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+.empty-state h3 { font-family: 'Fraunces', Georgia, serif; font-size: 1.2rem; color: var(--text); margin-bottom: 0.4rem; }
+
+.footer {
+  padding: 1.25rem 1.5rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 920px) {
+  .layout { grid-template-columns: 1fr; }
+  .intake-panel { position: relative; max-height: none; top: 0; }
+}
+@media (max-width: 600px) {
+  .header h1 { font-size: 1.4rem; }
+  .inline-row { grid-template-columns: 1fr; }
+  .check-grid { grid-template-columns: 1fr; }
+}
+
+.print-only { display: none; }
+
+@media print {
+  body { background: white; }
+  .header, .intake-panel, .filter-chips, .results-bar, .footer, .expand-arrow, .btn, .nav-tabs { display: none !important; }
+  .layout { grid-template-columns: 1fr; padding: 0; max-width: none; }
+  .card { break-inside: avoid; page-break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+  .card-body { display: block !important; border-top: 1px solid #ddd; }
+  .card.no { display: none; }
+  .group-heading.no { display: none; }
+  .fpl-strip { break-inside: avoid; }
+  .county-panel { break-inside: avoid; }
+  a { color: #000; text-decoration: none; }
+  .print-only { display: block !important; }
+  .print-header {
+    border-bottom: 2px solid #000;
+    padding: 0 0 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+  }
+  .print-header h2 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.3rem;
+    margin-bottom: 0.25rem;
+  }
+  .print-header .ph-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.85rem; margin-top: 0.3rem; }
+  .print-header .ph-meta span { white-space: nowrap; }
+  .print-header .ph-meta strong { font-weight: 600; }
+  .print-header .ph-summary { margin-top: 0.4rem; font-size: 0.82rem; color: #333; }
+  .print-header .ph-notes { margin-top: 0.4rem; padding: 0.4rem 0.6rem; background: #f5f5f5; border-left: 3px solid #999; font-size: 0.82rem; }
+  @page { margin: 0.5in; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <h1>Local Resource Eligibility Finder</h1>
+      <p>Screen for utility, housing, pharma, legal, food, insurance, and transport programs</p>
+      <span class="tag">PA • DE • MD • NJ • VA • DC</span>
+    </div>
+    <div class="nav-tabs">
+      <a class="nav-tab" href="index.html">MA Plan Finder</a>
+      <a class="nav-tab active" href="resources.html">Resource Finder</a>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <aside class="intake-panel" id="intakePanel">
+    <div class="panel-title">Patient intake</div>
+    <div class="panel-sub">Fields are optional — results refine as you add detail. Nothing is stored or sent anywhere.</div>
+
+    <div class="field-group">
+      <label class="field-label">Print handout label (optional)</label>
+      <div class="inline-row">
+        <input type="text" class="input" id="f_pname" placeholder="Patient name / initials">
+        <input type="text" class="input" id="f_pmrn" placeholder="MRN / chart #">
+      </div>
+      <div class="inline-row" style="margin-top:0.4rem;">
+        <input type="date" class="input" id="f_pdate">
+        <input type="text" class="input" id="f_pclin" placeholder="Clinician / case mgr">
+      </div>
+      <input type="text" class="input" id="f_pnotes" style="margin-top:0.4rem;" placeholder="Notes for this handout (optional)">
+      <div class="field-hint">These appear only at the top of the printed PDF.</div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">State</label>
+      <select class="select" id="f_state">
+        <option value="">— Select —</option>
+        <option value="PA">Pennsylvania</option>
+        <option value="NJ">New Jersey</option>
+        <option value="MD">Maryland</option>
+        <option value="DE">Delaware</option>
+        <option value="VA">Virginia</option>
+        <option value="DC">Washington, DC</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">County</label>
+      <select class="select" id="f_county"><option value="">— Select state first —</option></select>
+    </div>
+
+    <div class="field-group">
+      <div class="inline-row">
+        <div>
+          <label class="field-label">Age</label>
+          <input type="number" class="input" id="f_age" min="0" max="120" placeholder="e.g. 68">
+        </div>
+        <div>
+          <label class="field-label">Household size</label>
+          <input type="number" class="input" id="f_hh" min="1" max="15" value="1">
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Annual household income ($)</label>
+      <input type="number" class="input" id="f_income" min="0" step="100" placeholder="e.g. 22000">
+      <div class="field-hint" id="fplHint">Enter income to see FPL %.</div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Insurance status (check all)</label>
+      <div class="check-grid" id="f_insurance">
+        <label class="check-item"><input type="checkbox" value="uninsured"> Uninsured</label>
+        <label class="check-item"><input type="checkbox" value="medicaid"> Medicaid</label>
+        <label class="check-item"><input type="checkbox" value="medicare"> Medicare (Original)</label>
+        <label class="check-item"><input type="checkbox" value="medicare_adv"> Medicare Advantage</label>
+        <label class="check-item"><input type="checkbox" value="commercial"> Commercial / Employer</label>
+        <label class="check-item"><input type="checkbox" value="tricare"> TRICARE</label>
+        <label class="check-item"><input type="checkbox" value="va"> VA Healthcare</label>
+        <label class="check-item"><input type="checkbox" value="marketplace"> ACA Marketplace</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Citizenship / status</label>
+      <select class="select" id="f_citizen">
+        <option value="">— Select —</option>
+        <option value="citizen">US Citizen</option>
+        <option value="lpr_5">LPR / Green Card (≥5 years)</option>
+        <option value="lpr_new">LPR / Green Card (&lt;5 years)</option>
+        <option value="refugee">Refugee / Asylee</option>
+        <option value="visa">Visa Holder</option>
+        <option value="daca">DACA</option>
+        <option value="tps">TPS</option>
+        <option value="undocumented">Undocumented</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Income sources (check all)</label>
+      <div class="check-grid" id="f_incsrc">
+        <label class="check-item"><input type="checkbox" value="employment"> Employment</label>
+        <label class="check-item"><input type="checkbox" value="selfemp"> Self-employment</label>
+        <label class="check-item"><input type="checkbox" value="ssdi"> SSDI</label>
+        <label class="check-item"><input type="checkbox" value="ssi"> SSI</label>
+        <label class="check-item"><input type="checkbox" value="ssret"> SS Retirement</label>
+        <label class="check-item"><input type="checkbox" value="pension"> Pension</label>
+        <label class="check-item"><input type="checkbox" value="unemp"> Unemployment</label>
+        <label class="check-item"><input type="checkbox" value="tanf"> TANF</label>
+        <label class="check-item"><input type="checkbox" value="childsup"> Child support</label>
+        <label class="check-item"><input type="checkbox" value="alimony"> Alimony</label>
+        <label class="check-item"><input type="checkbox" value="none"> No income</label>
+        <label class="check-item"><input type="checkbox" value="other_inc"> Other</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Housing status</label>
+      <select class="select" id="f_housing">
+        <option value="">— Select —</option>
+        <option value="renter">Renter</option>
+        <option value="owner">Homeowner</option>
+        <option value="homeless">Homeless / Shelter</option>
+        <option value="ltc">Long-term care / Nursing</option>
+        <option value="alf">Assisted living</option>
+        <option value="transitional">Transitional housing</option>
+        <option value="doubled">Doubled up / with family</option>
+        <option value="other_h">Other</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Situational factors (check all that apply)</label>
+      <div class="check-grid" id="f_flags">
+        <label class="check-item"><input type="checkbox" value="veteran"> Veteran</label>
+        <label class="check-item"><input type="checkbox" value="pregnant"> Pregnant</label>
+        <label class="check-item"><input type="checkbox" value="disabled"> Disabled</label>
+        <label class="check-item"><input type="checkbox" value="children"> Children &lt;18</label>
+        <label class="check-item"><input type="checkbox" value="eviction"> Facing eviction / foreclosure</label>
+        <label class="check-item"><input type="checkbox" value="utility_shutoff"> Utility shutoff risk</label>
+        <label class="check-item"><input type="checkbox" value="caregiver"> Has caregiver / is one</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Major diagnoses (check all that apply)</label>
+      <div class="check-grid" id="f_dx">
+        <label class="check-item"><input type="checkbox" value="cancer_any"> Cancer (any)</label>
+        <label class="check-item"><input type="checkbox" value="cancer_breast"> Breast cancer</label>
+        <label class="check-item"><input type="checkbox" value="cancer_lung"> Lung cancer</label>
+        <label class="check-item"><input type="checkbox" value="cancer_blood"> Blood cancer (leuk/lymph/myeloma)</label>
+        <label class="check-item"><input type="checkbox" value="hiv"> HIV / AIDS</label>
+        <label class="check-item"><input type="checkbox" value="esrd"> Kidney disease / ESRD / dialysis</label>
+        <label class="check-item"><input type="checkbox" value="diabetes"> Diabetes</label>
+        <label class="check-item"><input type="checkbox" value="heart"> Heart disease / CHF</label>
+        <label class="check-item"><input type="checkbox" value="copd"> COPD / chronic lung</label>
+        <label class="check-item"><input type="checkbox" value="als"> ALS</label>
+        <label class="check-item"><input type="checkbox" value="parkinsons"> Parkinson's</label>
+        <label class="check-item"><input type="checkbox" value="alzheimers"> Alzheimer's / dementia</label>
+        <label class="check-item"><input type="checkbox" value="ms"> Multiple sclerosis</label>
+        <label class="check-item"><input type="checkbox" value="autoimmune"> Lupus / RA / autoimmune</label>
+        <label class="check-item"><input type="checkbox" value="sickle"> Sickle cell disease</label>
+        <label class="check-item"><input type="checkbox" value="hemophilia"> Hemophilia / bleeding d/o</label>
+        <label class="check-item"><input type="checkbox" value="cf"> Cystic fibrosis</label>
+        <label class="check-item"><input type="checkbox" value="hep_c"> Hepatitis C</label>
+        <label class="check-item"><input type="checkbox" value="transplant"> Organ transplant</label>
+        <label class="check-item"><input type="checkbox" value="smi"> Severe mental illness</label>
+        <label class="check-item"><input type="checkbox" value="rare"> Rare disease (other)</label>
+        <label class="check-item"><input type="checkbox" value="chronic"> Other chronic illness</label>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary btn-full" onclick="window.print()">Print / Save PDF</button>
+      <button class="btn btn-secondary btn-full" onclick="copyShareLink(this)">Copy shareable link</button>
+    </div>
+    <div class="btn-row" style="margin-top:0.5rem;">
+      <button class="btn btn-secondary btn-full" onclick="resetForm()">Reset all</button>
+    </div>
+    <div class="field-hint" style="margin-top:0.5rem;">
+      Intake (excluding patient name / MRN / notes) is saved in your browser and restored on next visit.
+    </div>
+  </aside>
+
+  <main class="results-panel">
+    <div class="print-only print-header" id="printHeader"></div>
+    <div class="fpl-strip" id="fplStrip"></div>
+    <div class="filter-chips" id="filterChips"></div>
+    <div class="results-bar" id="resultsBar"></div>
+    <div id="countyContact"></div>
+    <div id="cardsContainer"></div>
+  </main>
+
+</div>
+
+<div class="footer">
+  For bedside use by clinicians, social workers, and case managers. Eligibility shown is a first-pass screen — actual determinations are made by each program.
+  Thresholds use 2026 Federal Poverty Level (HHS, eff. Jan 13, 2026). Dial <strong>2-1-1</strong> for local referrals anywhere in the US, or <strong>988</strong> for mental health / suicide crisis.
+  <br>Not legal or financial advice. Verify with program staff before relying on eligibility for care planning.
+</div>
+
+<script>
+// ---------- 2026 HHS Federal Poverty Guidelines (48 contiguous states + DC) ----------
+// Effective Jan 13, 2026. 1-person $15,960; each additional $5,680.
+const FPL_BASE = 15960;
+const FPL_ADDL = 5680;
+function fplFor(hhSize) { return FPL_BASE + Math.max(0, hhSize - 1) * FPL_ADDL; }
+function fplPct(income, hhSize) {
+  if (!income || income <= 0 || !hhSize || hhSize < 1) return null;
+  return Math.round((income / fplFor(hhSize)) * 100);
+}
+function incomeAtPct(pct, hhSize) { return Math.round(fplFor(hhSize) * pct / 100); }
+
+// ---------- Counties by state ----------
+const COUNTIES = {
+  PA: ['Adams','Allegheny','Armstrong','Beaver','Bedford','Berks','Blair','Bradford','Bucks','Butler','Cambria','Cameron','Carbon','Centre','Chester','Clarion','Clearfield','Clinton','Columbia','Crawford','Cumberland','Dauphin','Delaware','Elk','Erie','Fayette','Forest','Franklin','Fulton','Greene','Huntingdon','Indiana','Jefferson','Juniata','Lackawanna','Lancaster','Lawrence','Lebanon','Lehigh','Luzerne','Lycoming','McKean','Mercer','Mifflin','Monroe','Montgomery','Montour','Northampton','Northumberland','Perry','Philadelphia','Pike','Potter','Schuylkill','Snyder','Somerset','Sullivan','Susquehanna','Tioga','Union','Venango','Warren','Washington','Wayne','Westmoreland','Wyoming','York'],
+  NJ: ['Atlantic','Bergen','Burlington','Camden','Cape May','Cumberland','Essex','Gloucester','Hudson','Hunterdon','Mercer','Middlesex','Monmouth','Morris','Ocean','Passaic','Salem','Somerset','Sussex','Union','Warren'],
+  MD: ['Allegany','Anne Arundel','Baltimore','Baltimore City','Calvert','Caroline','Carroll','Cecil','Charles','Dorchester','Frederick','Garrett','Harford','Howard','Kent','Montgomery',"Prince George's",'Queen Annes','Somerset',"St. Mary's",'Talbot','Washington','Wicomico','Worcester'],
+  DE: ['Kent','New Castle','Sussex'],
+  VA: ['Accomack','Albemarle','Alexandria','Arlington','Augusta','Bedford','Campbell','Charlottesville','Chesapeake','Chesterfield','Culpeper','Fairfax','Fauquier','Frederick','Fredericksburg','Hampton','Hanover','Harrisonburg','Henrico','James City','Lee','Loudoun','Lynchburg','Manassas','Montgomery','Newport News','Norfolk','Petersburg','Pittsylvania','Portsmouth','Prince William','Pulaski','Richmond City','Roanoke','Rockingham','Russell','Shenandoah','Spotsylvania','Stafford','Suffolk','Tazewell','Virginia Beach','Washington','Williamsburg','Winchester','Wise','Wythe','York'],
+  DC: ['Washington, DC']
+};
+
+// ---------- Resource database ----------
+// Shape: { id, name, category, scope: 'federal'|'state'|'local', states: [...]|'ALL',
+//   desc, eligibility, apply, phone, tty, web,
+//   criteria: { fplMax, fplMin, ageMin, ageMax, insurance, insuranceExclude, housing,
+//               hasAny, hasAll, citizenship, incomeSources },
+//   custom: (p) => true|false|'maybe' (optional override) }
+
+const RESOURCES = [
+
+  // ========== UTILITY ASSISTANCE ==========
+  {
+    id: 'liheap', category: 'utility', scope: 'federal',
+    name: 'LIHEAP — Low Income Home Energy Assistance',
+    states: 'ALL',
+    desc: 'Federal block grant, state-administered. Heating & cooling bill assistance, crisis grants for shutoffs, and weatherization referrals.',
+    eligibility: 'Generally ≤150% FPL or ≤60% state median income; must be responsible for home energy costs. Thresholds vary by state.',
+    apply: 'Apply through your state LIHEAP office or county assistance office. Season typically Nov–Apr (crisis year-round in most states).',
+    phone: '1-866-674-6327', web: 'https://www.acf.hhs.gov/ocs/programs/liheap',
+    criteria: { fplMax: 150, housing: ['renter','owner','transitional','doubled'] }
+  },
+  {
+    id: 'pa-peco-cap', category: 'utility', scope: 'local',
+    name: 'PECO CAP (Customer Assistance Program)',
+    states: ['PA'],
+    desc: 'Discounted electric/gas rates for PECO customers in SE Pennsylvania. Bills capped as % of income; arrears forgiveness after on-time payments.',
+    eligibility: '≤150% FPL; must be a PECO residential customer in name on the account.',
+    apply: 'Call PECO Universal Services or apply in person at a CAP agency.',
+    phone: '1-800-774-7040', web: 'https://www.peco.com/WaysToSave/ForYourHome/Pages/CAP.aspx',
+    criteria: { fplMax: 150, housing: ['renter','owner'] }
+  },
+  {
+    id: 'pa-pgw-crp', category: 'utility', scope: 'local',
+    name: 'PGW CRP (Customer Responsibility Program)',
+    states: ['PA'],
+    desc: 'Philadelphia Gas Works affordability plan. Fixed monthly bill based on income; arrears forgiven 1/36 per on-time payment.',
+    eligibility: '≤150% FPL; PGW residential gas customer in Philadelphia.',
+    apply: 'Apply at PGW CRP centers or online.',
+    phone: '215-235-1000', web: 'https://www.pgworks.com/residential/ways-to-save/customer-assistance-programs/crp',
+    criteria: { fplMax: 150, housing: ['renter','owner'] }
+  },
+  {
+    id: 'pa-def', category: 'utility', scope: 'state',
+    name: 'Dollar Energy Fund (Hardship Grants)',
+    states: ['PA'],
+    desc: 'Emergency grants for past-due electric/gas/water bills. Many PA utilities partner (PECO, PGW, PPL, Duquesne, Columbia Gas).',
+    eligibility: '≤200% FPL typically; must have received a shutoff notice or been shut off.',
+    apply: 'Apply via Dollar Energy Fund portal or at partner agency.',
+    phone: '1-866-762-2348', web: 'https://www.dollarenergy.org/need-help/',
+    criteria: { fplMax: 200, hasAny: ['utility_shutoff'] }
+  },
+  {
+    id: 'md-ohep', category: 'utility', scope: 'state',
+    name: 'MD OHEP / MEAP (Energy Assistance)',
+    states: ['MD'],
+    desc: 'Maryland Office of Home Energy Programs — heating (MEAP), electric (EUSP), arrears (Arrearage Retirement), and weatherization referrals.',
+    eligibility: '≤175% FPL for MEAP/EUSP.',
+    apply: 'Apply online at MyDHR or visit local energy assistance office.',
+    phone: '1-800-332-6347', web: 'https://dhr.maryland.gov/office-of-home-energy-programs/',
+    criteria: { fplMax: 175, housing: ['renter','owner','transitional'] }
+  },
+  {
+    id: 'nj-usf', category: 'utility', scope: 'state',
+    name: 'NJ USF — Universal Service Fund',
+    states: ['NJ'],
+    desc: 'Monthly credits on electric/gas bills; combines with NJ LIHEAP. Also includes Fresh Start arrears forgiveness for clients current on USF for 12 months.',
+    eligibility: '≤60% state median income (roughly ≤200% FPL for most households).',
+    apply: 'Apply with LIHEAP application via DCAid portal.',
+    phone: '1-800-510-3102', web: 'https://www.nj.gov/bpu/assistance/programs/',
+    criteria: { fplMax: 200, housing: ['renter','owner'] }
+  },
+  {
+    id: 'nj-page', category: 'utility', scope: 'state',
+    name: 'NJ PAGE — Payment Assistance for Gas & Electric',
+    states: ['NJ'],
+    desc: 'Up to $700 one-time for households facing electric/gas shutoff who do not qualify for LIHEAP/USF.',
+    eligibility: '≤400% FPL with documented shutoff notice or arrears.',
+    apply: 'Apply via NJ SHARES / DCAid.',
+    phone: '1-732-982-8710', web: 'https://www.njpoweron.org',
+    criteria: { fplMax: 400, hasAny: ['utility_shutoff'] }
+  },
+  {
+    id: 'de-energy', category: 'utility', scope: 'state',
+    name: 'DE Energy Assistance (LIHEAP + DEAP)',
+    states: ['DE'],
+    desc: 'Delaware LIHEAP (heating/cooling) and Delaware Energy Assistance Program — crisis grants and weatherization.',
+    eligibility: '≤200% FPL.',
+    apply: 'Apply at Catholic Charities (New Castle), First State Community Action (Kent/Sussex), or online.',
+    phone: '1-800-464-4357', web: 'https://dhss.delaware.gov/dhss/dss/liheap.html',
+    criteria: { fplMax: 200, housing: ['renter','owner'] }
+  },
+  {
+    id: 'va-eap', category: 'utility', scope: 'state',
+    name: 'VA Energy Assistance Program',
+    states: ['VA'],
+    desc: 'Fuel Assistance (Nov–Jan), Cooling Assistance (Jun–Aug), and Crisis Assistance for shutoffs/heating emergencies.',
+    eligibility: '≤150% FPL (Fuel/Cooling), crisis year-round.',
+    apply: 'Apply through CommonHelp (Virginia DSS).',
+    phone: '1-855-635-4370', web: 'https://www.dss.virginia.gov/benefit/ea.cgi',
+    criteria: { fplMax: 150 }
+  },
+  {
+    id: 'lifeline', category: 'utility', scope: 'federal',
+    name: 'Lifeline (Phone/Broadband Discount)',
+    states: 'ALL',
+    desc: 'FCC program: $9.25/mo discount on phone or internet ($34.25 on Tribal lands). Can combine with tribal programs.',
+    eligibility: '≤135% FPL OR participation in Medicaid, SNAP, SSI, FPHA, Veterans Pension.',
+    apply: 'Apply at LifelineSupport.org.',
+    phone: '1-800-234-9473', web: 'https://www.lifelinesupport.org/',
+    criteria: {},
+    custom: p => p.fpl !== null && p.fpl <= 135 ? true :
+                 (p.insurance.has('medicaid') || p.incsrc.has('ssi') || p.flags.has('veteran') ? true : 'maybe')
+  },
+
+  // ========== HOUSING ==========
+  {
+    id: 'section8', category: 'housing', scope: 'federal',
+    name: 'Section 8 Housing Choice Voucher',
+    states: 'ALL',
+    desc: 'Federal rental subsidy paid to private landlords; tenant pays ~30% of income toward rent. Administered by local Public Housing Authorities (PHAs).',
+    eligibility: 'Generally ≤50% Area Median Income (AMI); 75% of new vouchers must go to ≤30% AMI. Citizenship/eligible-immigrant required. Most waitlists are long or closed.',
+    apply: 'Apply at your local PHA — waitlists open intermittently. Check AffordableHousing.com and PHA websites.',
+    phone: '', web: 'https://www.hud.gov/topics/rental_assistance',
+    criteria: { fplMax: 200, housing: ['renter','homeless','transitional','doubled','ltc','alf','other_h'], citizenshipExclude: ['undocumented','daca','visa','tps'] }
+  },
+  {
+    id: 'haf', category: 'housing', scope: 'state',
+    name: 'Homeowner Assistance Fund (HAF)',
+    states: ['PA','NJ','MD','DE','VA','DC'],
+    desc: 'ARPA-funded mortgage, property tax, HOA, utility, and insurance assistance for homeowners behind due to COVID-era hardship. Some state programs are paused or winding down — check current status.',
+    eligibility: '≤150% AMI typically; must be primary residence and document hardship since Jan 2020.',
+    apply: 'PA Homeowner Assistance Fund (PHFA), NJ HAF (DCA), MD HAF (DHCD), DE HAF, VA HAF (VHDA), DC HAF (DHCD).',
+    phone: '', web: 'https://www.ncsha.org/homeowner-assistance-fund/',
+    criteria: { housing: ['owner'], fplMax: 500 }
+  },
+  {
+    id: 'erap', category: 'housing', scope: 'state',
+    name: 'Emergency Rental Assistance / ERAP',
+    states: ['PA','NJ','MD','DE','VA','DC'],
+    desc: 'Rental arrears and forward-month assistance; most state ERAPs have wound down but many counties + DC still operate programs. Eviction-prevention component often active.',
+    eligibility: '≤80% AMI (usually matches 200–300% FPL); documented COVID-era or current housing instability.',
+    apply: 'Call 2-1-1 for current local program. DC ERAP via DHS.',
+    phone: '211', web: 'https://www.consumerfinance.gov/coronavirus/mortgage-and-housing-assistance/renter-protections/find-help-with-rent-and-utilities/',
+    criteria: { housing: ['renter','transitional','doubled'], fplMax: 300, hasAny: ['eviction'] }
+  },
+  {
+    id: 'pa-hemap', category: 'housing', scope: 'state',
+    name: 'PA HEMAP — Homeowner Emergency Mortgage Assistance',
+    states: ['PA'],
+    desc: 'Loans (repayable) to bring a mortgage current and cover up to 24 months of payments for Pennsylvania homeowners facing foreclosure.',
+    eligibility: 'Must have received Act 91 foreclosure notice; delinquency due to circumstances beyond your control; reasonable prospect of resuming full payments.',
+    apply: 'Apply within 33 days of receiving Act 91 notice through a HEMAP-approved counseling agency.',
+    phone: '1-800-342-2397', web: 'https://www.phfa.org/hemap/',
+    criteria: { housing: ['owner'], hasAny: ['eviction'] }
+  },
+  {
+    id: 'pa-property-rebate', category: 'housing', scope: 'state',
+    name: 'PA Property Tax / Rent Rebate',
+    states: ['PA'],
+    desc: 'Annual rebate up to $1,000 for eligible Pennsylvanians on property taxes or rent paid the prior year.',
+    eligibility: 'Age 65+ OR widow/widower 50+ OR disabled 18+; income ≤$46,520 (excludes half of Social Security).',
+    apply: 'File form PA-1000 by June 30 each year; free help at APPRISE and local Area Agencies on Aging.',
+    phone: '1-888-222-9190', web: 'https://www.revenue.pa.gov/IncentivesCreditsPrograms/PropertyTaxRentRebateProgram/',
+    criteria: { housing: ['renter','owner'] },
+    custom: p => {
+      if (!(p.isSenior || p.flags.has('disabled') || (p.age !== null && p.age >= 50))) return false;
+      if (p.income !== null && p.income > 46520) return 'maybe';
+      return 'yes';
+    }
+  },
+  {
+    id: 'md-homeowner-tax', category: 'housing', scope: 'state',
+    name: 'MD Homeowners Property Tax Credit',
+    states: ['MD'],
+    desc: 'Limits property tax based on household income. Most homeowners ≤$60k combined gross income qualify for a credit.',
+    eligibility: 'Homeowner; combined gross household income ≤ approx. $60,000; net worth <$200,000 (excluding home).',
+    apply: 'File SDAT Form HTC by Oct 1 each year.',
+    phone: '1-410-767-4433', web: 'https://dat.maryland.gov/realproperty/Pages/Homeowners\'-Property-Tax-Credit-Program.aspx',
+    criteria: { housing: ['owner'] },
+    custom: p => (p.income !== null && p.income > 60000) ? false : (p.income === null ? 'maybe' : 'yes')
+  },
+  {
+    id: 'coc-homeless', category: 'housing', scope: 'federal',
+    name: 'Continuum of Care / Homeless Services',
+    states: 'ALL',
+    desc: 'Entry point for emergency shelter, transitional housing, Rapid Re-Housing (RRH), and Permanent Supportive Housing (PSH). Most areas use a Coordinated Entry assessment.',
+    eligibility: 'Currently homeless, fleeing DV, or at imminent risk of homelessness.',
+    apply: 'Call 2-1-1 or the local CoC hotline for Coordinated Entry.',
+    phone: '211', web: 'https://www.hudexchange.info/programs/coc/',
+    criteria: { housing: ['homeless','transitional','doubled','other_h'] }
+  },
+  {
+    id: 'pha-publichousing', category: 'housing', scope: 'federal',
+    name: 'Public Housing (PHA Owned Units)',
+    states: 'ALL',
+    desc: 'Federally subsidized apartments owned by local Public Housing Authority. Rent is typically 30% of adjusted income.',
+    eligibility: '≤80% AMI; most PHAs prioritize ≤30% AMI. Waitlists can be years long.',
+    apply: 'Apply directly at each local PHA.',
+    phone: '', web: 'https://www.hud.gov/topics/rental_assistance/phprog',
+    criteria: { fplMax: 200, housing: ['renter','homeless','transitional','doubled','other_h'], citizenshipExclude: ['undocumented','daca','visa','tps'] }
+  },
+
+  // ========== PHARMACEUTICAL ASSISTANCE ==========
+  {
+    id: 'goodrx', category: 'pharma', scope: 'federal',
+    name: 'GoodRx (Discount Card)',
+    states: 'ALL',
+    desc: 'Free discount card comparing retail cash prices across pharmacies. Often beats insurance copays for generics. Cannot be combined with insurance at point of sale.',
+    eligibility: 'No eligibility requirements — available to anyone. Most useful when uninsured, high-deductible, or for drugs not covered.',
+    apply: 'Search at goodrx.com or download the app; show coupon at pharmacy.',
+    phone: '', web: 'https://www.goodrx.com',
+    criteria: {}
+  },
+  {
+    id: 'costplus', category: 'pharma', scope: 'federal',
+    name: 'Mark Cuban Cost Plus Drug Company',
+    states: 'ALL',
+    desc: 'Direct-to-consumer online pharmacy with transparent pricing (manufacturer cost + 15% + $3 dispensing + shipping). Strong for generics; 2,500+ medications.',
+    eligibility: 'Open to anyone with a valid prescription. Does not bill insurance.',
+    apply: 'Create an account at costplusdrugs.com; prescriber sends Rx to Cost Plus pharmacy.',
+    phone: '', web: 'https://costplusdrugs.com',
+    criteria: {}
+  },
+  {
+    id: 'needymeds', category: 'pharma', scope: 'federal',
+    name: 'NeedyMeds (Assistance Directory)',
+    states: 'ALL',
+    desc: 'Nonprofit clearinghouse: searchable directory of manufacturer PAPs, copay cards, disease-based funds, free/low-cost clinics, diagnostic assistance, and camps.',
+    eligibility: 'No eligibility — it\'s a directory/search tool. Programs listed have varying criteria.',
+    apply: 'Search needymeds.org by drug name or diagnosis.',
+    phone: '1-800-503-6897', web: 'https://www.needymeds.org',
+    criteria: {}
+  },
+  {
+    id: 'healthwell', category: 'pharma', scope: 'federal',
+    name: 'HealthWell Foundation',
+    states: 'ALL',
+    desc: 'Copay & premium assistance for people with insurance. Disease-specific funds (cancer, MS, rheumatologic, rare disease, etc.); open/closed status changes — check fund availability.',
+    eligibility: 'Must have insurance covering the medication; income typically ≤500% FPL (varies by fund); diagnosis matches an open fund.',
+    apply: 'Apply at healthwellfoundation.org after confirming a fund is open.',
+    phone: '1-800-675-8416', web: 'https://www.healthwellfoundation.org',
+    criteria: { fplMax: 500, insuranceExclude: ['uninsured'], hasAny: ['chronic','cancer','hiv'] }
+  },
+  {
+    id: 'pan', category: 'pharma', scope: 'federal',
+    name: 'PAN Foundation (Patient Access Network)',
+    states: 'ALL',
+    desc: 'Copay, travel, and insurance premium assistance for 70+ disease funds. Primarily serves Medicare beneficiaries.',
+    eligibility: 'Medicare beneficiary (most funds); income ≤500% FPL (varies); diagnosis matches open fund.',
+    apply: 'Check open funds at panfoundation.org; apply by phone or online.',
+    phone: '1-866-316-7263', web: 'https://www.panfoundation.org',
+    criteria: { fplMax: 500, hasAny: ['chronic','cancer','hiv'] },
+    custom: p => (p.hasMedicare || p.insurance.has('medicare_adv')) ? 'yes' : 'maybe'
+  },
+  {
+    id: 'rxoutreach', category: 'pharma', scope: 'federal',
+    name: 'Rx Outreach',
+    states: 'ALL',
+    desc: 'Nonprofit mail-order pharmacy. Low flat fees per 90-day supply for 500+ generic medications. Works for uninsured or those with high copays.',
+    eligibility: '≤400% FPL typically.',
+    apply: 'Download enrollment form at rxoutreach.org or call.',
+    phone: '1-888-796-1234', web: 'https://rxoutreach.org',
+    criteria: { fplMax: 400 }
+  },
+  {
+    id: 'paps', category: 'pharma', scope: 'federal',
+    name: 'Manufacturer Patient Assistance Programs (PAPs)',
+    states: 'ALL',
+    desc: 'Most major pharma manufacturers run free-drug PAPs for uninsured or underinsured patients. RxAssist and Medicine Assistance Tool (MAT) are searchable directories.',
+    eligibility: 'Typically uninsured or underinsured; income ≤200–400% FPL (varies by manufacturer).',
+    apply: 'Search rxassist.org or mat.org by drug name; complete manufacturer form (prescriber signature usually required).',
+    phone: '', web: 'https://www.rxassist.org',
+    criteria: { fplMax: 400 }
+  },
+  {
+    id: 'lis', category: 'pharma', scope: 'federal',
+    name: 'Medicare Extra Help / LIS (Low-Income Subsidy)',
+    states: 'ALL',
+    desc: 'Reduces or eliminates Part D premiums, deductibles, and copays (copay caps rise slightly with COLA each year; $0 for dual eligibles). Fully expanded — no partial benefit tier.',
+    eligibility: 'Medicare-eligible; income ≤150% FPL (~$23,940 single / $32,460 couple in 2026); resources ≤ CMS annual limit (verify current-year figures).',
+    apply: 'Apply via SSA (ssa.gov/extrahelp) or through state Medicaid office — auto-enrolled if on Medicaid, MSP, or SSI.',
+    phone: '1-800-772-1213', web: 'https://www.ssa.gov/medicare/part-d-extra-help',
+    criteria: { fplMax: 150, insurance: ['medicare','medicare_adv'] }
+  },
+  {
+    id: 'pa-pace', category: 'pharma', scope: 'state',
+    name: 'PA PACE (Pharmaceutical Assistance Contract for the Elderly)',
+    states: ['PA'],
+    desc: 'PA-funded wrap-around drug coverage for seniors. Copay: $6 generic / $9 brand. Works alongside Part D (acts as secondary).',
+    eligibility: 'Age 65+; PA resident ≥90 days; single income ≤$14,500 / couple ≤$17,700 (prior-year).',
+    apply: 'Apply via APPRISE or Area Agency on Aging.',
+    phone: '1-800-225-7223', web: 'https://www.pace.pa.gov',
+    criteria: { ageMin: 65 },
+    custom: p => {
+      if (!(p.age !== null && p.age >= 65) || p.state !== 'PA') return false;
+      if (p.income === null) return 'maybe';
+      const cap = p.hh >= 2 ? 17700 : 14500;
+      return p.income <= cap ? 'yes' : false;
+    }
+  },
+  {
+    id: 'pa-pacenet', category: 'pharma', scope: 'state',
+    name: 'PA PACENET (Higher-Income Tier)',
+    states: ['PA'],
+    desc: 'Expanded tier of PA PACE. Copays: $8 generic / $15 brand, plus a monthly Part D premium deducted if paired with a Part D plan.',
+    eligibility: 'Age 65+; PA resident; single income $14,501–$33,500 / couple $17,701–$41,500.',
+    apply: 'Apply via APPRISE or Area Agency on Aging; one combined PACE/PACENET application.',
+    phone: '1-800-225-7223', web: 'https://www.pace.pa.gov',
+    criteria: { ageMin: 65 },
+    custom: p => {
+      if (!(p.age !== null && p.age >= 65) || p.state !== 'PA') return false;
+      if (p.income === null) return 'maybe';
+      const [lo, hi] = p.hh >= 2 ? [17700, 41500] : [14500, 33500];
+      return (p.income > lo && p.income <= hi) ? 'yes' : false;
+    }
+  },
+  {
+    id: 'nj-paad', category: 'pharma', scope: 'state',
+    name: 'NJ PAAD (Pharmaceutical Assistance to the Aged & Disabled)',
+    states: ['NJ'],
+    desc: 'NJ drug coverage: $5 generic / $7 brand. Works with Part D (enrollees are auto-enrolled in Extra Help application).',
+    eligibility: 'Age 65+ OR disabled receiving SSDI; NJ resident; single income ≤$54,943 / couple ≤$62,390 (2026).',
+    apply: 'Apply at NJSave.nj.gov (single app for PAAD, Senior Gold, Lifeline, USF, LIHEAP).',
+    phone: '1-800-792-9745', web: 'https://www.state.nj.us/humanservices/doas/services/paad/',
+    criteria: {},
+    custom: p => {
+      if (p.state !== 'NJ') return false;
+      const ageOk = (p.age !== null && p.age >= 65) || p.incsrc.has('ssdi') || p.flags.has('disabled');
+      if (!ageOk) return false;
+      if (p.income === null) return 'maybe';
+      const cap = p.hh >= 2 ? 62390 : 54943;
+      return p.income <= cap ? 'yes' : false;
+    }
+  },
+  {
+    id: 'nj-seniorgold', category: 'pharma', scope: 'state',
+    name: 'NJ Senior Gold Prescription Discount',
+    states: ['NJ'],
+    desc: 'NJ tier above PAAD. 50% co-pay share plus $15 after a $2,000 annual out-of-pocket, up to an annual cap.',
+    eligibility: 'Age 65+ OR disabled; NJ resident; income just above PAAD cap (single $54,943–$64,943; couple $62,390–$70,690 — 2026).',
+    apply: 'Apply via NJSave.nj.gov.',
+    phone: '1-800-792-9745', web: 'https://www.state.nj.us/humanservices/doas/services/seniorgold/',
+    criteria: {},
+    custom: p => {
+      if (p.state !== 'NJ') return false;
+      const ageOk = (p.age !== null && p.age >= 65) || p.incsrc.has('ssdi') || p.flags.has('disabled');
+      if (!ageOk) return false;
+      if (p.income === null) return 'maybe';
+      const [lo, hi] = p.hh >= 2 ? [62390, 70690] : [54943, 64943];
+      return (p.income > lo && p.income <= hi) ? 'yes' : false;
+    }
+  },
+  {
+    id: 'md-spdap', category: 'pharma', scope: 'state',
+    name: 'MD SPDAP (Senior Prescription Drug Assistance)',
+    states: ['MD'],
+    desc: 'Up to $50/month toward Medicare Part D premiums. Does not cover copays.',
+    eligibility: 'MD resident with Medicare; household income ≤300% FPL.',
+    apply: 'Apply via Maryland Health Connection or call SPDAP.',
+    phone: '1-800-551-5995', web: 'https://marylandspdap.com',
+    criteria: { fplMax: 300, insurance: ['medicare','medicare_adv'] }
+  },
+  {
+    id: 'de-dpap', category: 'pharma', scope: 'state',
+    name: 'DE DPAP (Delaware Prescription Assistance Program)',
+    states: ['DE'],
+    desc: 'Delaware pays up to $3,000/yr per person for Part D premiums and drug costs for Medicare beneficiaries without other drug coverage.',
+    eligibility: 'DE resident; Medicare eligible; ≤200% FPL OR significant Rx expenses ≥40% of annual income.',
+    apply: 'Apply via DHSS Division of Services for Aging and Adults with Physical Disabilities.',
+    phone: '1-800-464-4357', web: 'https://dhss.delaware.gov/dhss/dsaapd/dpap.html',
+    criteria: { insurance: ['medicare','medicare_adv'] },
+    custom: p => {
+      if (p.state !== 'DE') return false;
+      if (!(p.insurance.has('medicare') || p.insurance.has('medicare_adv'))) return 'maybe';
+      if (p.fpl === null) return 'maybe';
+      return p.fpl <= 200 ? 'yes' : 'maybe';
+    }
+  },
+
+  // ========== HEALTH INSURANCE ==========
+  {
+    id: 'medicaid', category: 'insurance', scope: 'state',
+    name: 'Medicaid (Adult Expansion)',
+    states: ['PA','NJ','MD','DE','VA','DC'],
+    desc: 'State-run; all six PA/NJ/MD/DE/VA/DC expanded Medicaid. PA=Medical Assistance/PA MAWD, NJ=NJ FamilyCare, MD=Medicaid, DE=DMAP, VA=Cardinal Care, DC=Medicaid. No premiums or very low premiums; comprehensive coverage.',
+    eligibility: 'Adults ≤138% FPL. Higher for pregnant women (~205–214% FPL) and children (CHIP). Citizenship or qualifying immigration status required for full benefits; emergency Medicaid for others.',
+    apply: 'PA: COMPASS (compass.state.pa.us). NJ: NJ FamilyCare. MD: Maryland Health Connection. DE: Delaware ASSIST. VA: CommonHelp / Cover VA. DC: DC Health Link.',
+    phone: '', web: 'https://www.medicaid.gov',
+    criteria: { fplMax: 138, citizenshipExclude: ['undocumented','visa','tps','daca'] }
+  },
+  {
+    id: 'chip', category: 'insurance', scope: 'state',
+    name: 'CHIP — Children\'s Health Insurance',
+    states: ['PA','NJ','MD','DE','VA','DC'],
+    desc: 'Low- or no-cost comprehensive coverage for children under 19 in households above Medicaid limits. PA CHIP / NJ FamilyCare Kids / MD Children\'s Health Program / DE CHIP / FAMIS VA / DC Healthy Families.',
+    eligibility: 'Children <19, household income roughly ≤300–400% FPL (varies by state).',
+    apply: 'Same portals as Medicaid above; one combined application.',
+    phone: '1-877-543-7669', web: 'https://www.insurekidsnow.gov',
+    criteria: { ageMax: 18, fplMax: 400 },
+    custom: p => {
+      if (!p.flags.has('children') && !(p.age !== null && p.age < 19)) return false;
+      if (p.fpl === null) return 'maybe';
+      return p.fpl <= 400 ? 'yes' : false;
+    }
+  },
+  {
+    id: 'aca', category: 'insurance', scope: 'federal',
+    name: 'ACA Marketplace (Healthcare.gov / State Exchange)',
+    states: ['PA','NJ','MD','DE','VA','DC'],
+    desc: 'Premium tax credits and cost-sharing reductions for private plans. PA: Pennie. NJ: GetCoveredNJ. MD: Maryland Health Connection. DE/VA: healthcare.gov. DC: DC Health Link.',
+    eligibility: 'Income ≥100% FPL. Enhanced ARPA/IRA premium tax credits (no 400% FPL cliff) expired after 2025 — verify current-year subsidy structure. Not eligible for other affordable coverage (Medicaid/Medicare/job-based).',
+    apply: 'Open Enrollment Nov 1–Jan 15 each year; Special Enrollment for qualifying life events and ≤150% FPL.',
+    phone: '1-800-318-2596', web: 'https://www.healthcare.gov',
+    criteria: { fplMin: 100, insuranceExclude: ['medicare','medicaid','medicare_adv'] }
+  },
+  {
+    id: 'msp', category: 'insurance', scope: 'federal',
+    name: 'Medicare Savings Programs (QMB / SLMB / QI)',
+    states: 'ALL',
+    desc: 'State Medicaid pays Medicare Part B premium, and for QMB also pays Part A premium + all Medicare deductibles/coinsurance. Auto-enrolls in Extra Help.',
+    eligibility: 'Medicare beneficiary. QMB: ≤100% FPL. SLMB: ≤120% FPL. QI: ≤135% FPL. Asset limits ~$9,660 individual / $14,470 couple (2026; several states waive asset test — DE/DC waive, others check).',
+    apply: 'Apply via your state Medicaid office or SSA. Most SHIP counselors can assist.',
+    phone: '1-800-MEDICARE', web: 'https://www.medicare.gov/basics/costs/help/medicare-savings-programs',
+    criteria: { fplMax: 135, insurance: ['medicare','medicare_adv'] }
+  },
+  {
+    id: 'charity', category: 'insurance', scope: 'federal',
+    name: 'Hospital Financial Assistance / Charity Care',
+    states: 'ALL',
+    desc: 'Every nonprofit hospital (501(c)(3)) must offer a Financial Assistance Policy (FAP) discounting or waiving bills for eligible patients. NJ Charity Care is statewide; other states vary by hospital.',
+    eligibility: 'Varies by hospital — typically ≤200–500% FPL for some discount; ≤200% often fully free. NJ Charity Care: ≤300% FPL.',
+    apply: 'Ask the hospital billing office for the FAP application; submit within 240 days of first bill.',
+    phone: '', web: 'https://dollarfor.org/',
+    criteria: { fplMax: 500 }
+  },
+  {
+    id: 'ryan-white', category: 'insurance', scope: 'federal',
+    name: 'Ryan White HIV/AIDS Program (ADAP)',
+    states: 'ALL',
+    desc: 'Medication, insurance premium, and care-gap assistance for people with HIV. Includes ADAP (AIDS Drug Assistance Program) in every state.',
+    eligibility: 'HIV diagnosis; income typically ≤500% FPL (state-specific); uninsured or underinsured.',
+    apply: 'Contact state ADAP office or Ryan White Part B provider.',
+    phone: '1-800-448-0440', web: 'https://ryanwhite.hrsa.gov',
+    criteria: { fplMax: 500, hasAny: ['hiv'] }
+  },
+
+  // ========== FOOD & NUTRITION ==========
+  {
+    id: 'snap', category: 'food', scope: 'federal',
+    name: 'SNAP — Supplemental Nutrition Assistance Program',
+    states: 'ALL',
+    desc: 'Monthly benefit loaded on EBT card for groceries. Amount scales with household size and income.',
+    eligibility: 'Gross income ≤130% FPL, net ≤100% FPL. Asset test in some states. US citizen or qualified non-citizen (most LPRs after 5 years, refugees/asylees, children).',
+    apply: 'PA: COMPASS. NJ: NJOneApp. MD: MyDHR. DE: DE ASSIST. VA: CommonHelp. DC: DC Access.',
+    phone: '1-800-221-5689', web: 'https://www.fns.usda.gov/snap',
+    criteria: { fplMax: 130, citizenshipExclude: ['undocumented','visa','daca','tps'] }
+  },
+  {
+    id: 'wic', category: 'food', scope: 'federal',
+    name: 'WIC — Women, Infants & Children',
+    states: 'ALL',
+    desc: 'Supplemental food, formula, breastfeeding support, and nutrition education for pregnant/postpartum women, infants, and children up to age 5.',
+    eligibility: 'Pregnant/postpartum/breastfeeding woman OR child <5; household income ≤185% FPL OR receives Medicaid/SNAP/TANF. No citizenship restriction.',
+    apply: 'Contact local WIC agency; phone screening + appointment.',
+    phone: '', web: 'https://www.fns.usda.gov/wic',
+    criteria: { fplMax: 185 },
+    custom: p => {
+      if (!(p.flags.has('pregnant') || p.flags.has('children') || (p.age !== null && p.age < 5))) return 'maybe';
+      if (p.fpl !== null && p.fpl <= 185) return 'yes';
+      if (p.insurance.has('medicaid') || p.incsrc.has('tanf')) return 'yes';
+      return p.fpl === null ? 'maybe' : false;
+    }
+  },
+  {
+    id: 'mealsonwheels', category: 'food', scope: 'local',
+    name: 'Meals on Wheels',
+    states: 'ALL',
+    desc: 'Home-delivered meals for homebound older adults (and some disabled under-60 adults). Suggested donation, not charged. Includes wellness check at delivery.',
+    eligibility: 'Typically 60+ OR disabled AND homebound. Income not a strict requirement in most programs.',
+    apply: 'Find local program at mealsonwheelsamerica.org/find-meals or call your Area Agency on Aging.',
+    phone: '', web: 'https://www.mealsonwheelsamerica.org',
+    criteria: {},
+    custom: p => {
+      const eligible = (p.age !== null && p.age >= 60) || p.flags.has('disabled');
+      return eligible ? 'yes' : (p.age === null ? 'maybe' : false);
+    }
+  },
+  {
+    id: 'csfp', category: 'food', scope: 'federal',
+    name: 'CSFP — Commodity Supplemental Food Program (Senior Food Box)',
+    states: 'ALL',
+    desc: 'Monthly 30–40 lb box of USDA foods for low-income seniors 60+. Run through state ag departments and food banks.',
+    eligibility: 'Age 60+; income ≤130% FPL.',
+    apply: 'Contact local food bank or state CSFP coordinator.',
+    phone: '', web: 'https://www.fns.usda.gov/csfp/commodity-supplemental-food-program',
+    criteria: { ageMin: 60, fplMax: 130 }
+  },
+  {
+    id: 'foodpantry', category: 'food', scope: 'local',
+    name: 'Local Food Pantry / TEFAP',
+    states: 'ALL',
+    desc: 'Emergency groceries, often same-day. TEFAP (The Emergency Food Assistance Program) supplies most pantries with USDA food. No application for most pantries.',
+    eligibility: 'Self-attested need at most pantries. TEFAP box: ≤185% FPL.',
+    apply: 'Call 2-1-1 or search feedingamerica.org/find-your-local-foodbank.',
+    phone: '211', web: 'https://www.feedingamerica.org/find-your-local-foodbank',
+    criteria: {}
+  },
+
+  // ========== LEGAL AID ==========
+  {
+    id: 'lawhelp', category: 'legal', scope: 'federal',
+    name: 'LawHelp.org & LSC Directory',
+    states: 'ALL',
+    desc: 'National searchable directory of free/low-cost legal aid organizations by state and issue (housing, family, benefits, immigration, consumer, disability).',
+    eligibility: 'Varies by program. Most Legal Services Corporation grantees serve ≤125–200% FPL.',
+    apply: 'Enter your ZIP at lawhelp.org to find local programs; or call 2-1-1 for legal referral.',
+    phone: '211', web: 'https://www.lawhelp.org',
+    criteria: { fplMax: 200 }
+  },
+  {
+    id: 'pa-palegalaid', category: 'legal', scope: 'state',
+    name: 'PA Legal Aid Network',
+    states: ['PA'],
+    desc: 'Statewide network (MidPenn, Laurel, Neighborhood, North Penn, Northwestern, Legal Aid of SE PA, etc.) covering housing, public benefits, domestic violence, consumer, senior, and Medicaid/Medicare appeals.',
+    eligibility: 'Generally ≤125% FPL (higher for seniors and some matters).',
+    apply: 'Call PA Legal Aid hotline or apply online at palawhelp.org.',
+    phone: '1-800-322-7572', web: 'https://www.palegalaid.net',
+    criteria: { fplMax: 200 }
+  },
+  {
+    id: 'cls-philly', category: 'legal', scope: 'local',
+    name: 'Community Legal Services (CLS) Philadelphia',
+    states: ['PA'],
+    desc: 'Philadelphia-based free legal services in benefits (SSI/SSDI, SNAP, Medicaid), employment, family, homeownership, consumer, and immigration.',
+    eligibility: '≤200% FPL for most matters; Philadelphia residents.',
+    apply: 'Call CLS intake or walk in at 1424 Chestnut St or 1410 W. Erie Ave.',
+    phone: '215-981-3700', web: 'https://clsphila.org',
+    criteria: { fplMax: 200 }
+  },
+  {
+    id: 'pa-phlp', category: 'legal', scope: 'state',
+    name: 'PA Health Law Project',
+    states: ['PA'],
+    desc: 'Specialized legal help for Medicaid/CHIP/Medicare appeals, long-term care coverage, managed-care disputes, and health-related benefits for PA residents.',
+    eligibility: 'PA resident with health coverage issue; no strict income cutoff.',
+    apply: 'Call helpline; intake screens by issue type.',
+    phone: '1-800-274-3258', web: 'https://www.phlp.org',
+    criteria: {}
+  },
+  {
+    id: 'md-legalaid', category: 'legal', scope: 'state',
+    name: 'Maryland Legal Aid',
+    states: ['MD'],
+    desc: 'Statewide nonprofit covering housing, benefits, family, consumer, veterans, senior legal, and farm-worker issues.',
+    eligibility: '≤125% FPL for most matters (higher for seniors 60+ and some issues).',
+    apply: 'Call statewide intake or visit one of 12 regional offices.',
+    phone: '1-866-635-2948', web: 'https://www.mdlab.org',
+    criteria: { fplMax: 200 }
+  },
+  {
+    id: 'nj-lsnj', category: 'legal', scope: 'state',
+    name: 'Legal Services of New Jersey (LSNJ)',
+    states: ['NJ'],
+    desc: 'Statewide coverage via regional programs. Housing, benefits, family, consumer, immigration, disability, and veterans. Also runs LSNJLAW^SM self-help site.',
+    eligibility: '≤200% FPL typically.',
+    apply: 'Call LSNJ intake hotline or apply online at lsnjlawhotline.org.',
+    phone: '1-888-576-5529', web: 'https://www.lsnj.org',
+    criteria: { fplMax: 200 }
+  },
+  {
+    id: 'de-clasi', category: 'legal', scope: 'state',
+    name: 'Community Legal Aid Society (CLASI) — Delaware',
+    states: ['DE'],
+    desc: 'Delaware\'s free civil legal aid. Fair Housing, Disabilities Law, Elder Law, and general Legal Services Corporation program.',
+    eligibility: '≤200% FPL for most; disability and elder services have separate criteria.',
+    apply: 'Call the central intake line.',
+    phone: '1-302-575-0660', web: 'https://www.declasi.org',
+    criteria: { fplMax: 200 }
+  },
+  {
+    id: 'va-vplc', category: 'legal', scope: 'state',
+    name: 'Virginia Legal Aid (VLAS/LSNV/BRLS/CVLAS/LAJC/VPLC)',
+    states: ['VA'],
+    desc: 'Eight regional legal aid programs plus Virginia Poverty Law Center. Housing, benefits, family, consumer, immigration, and disability.',
+    eligibility: '≤125% FPL for most matters.',
+    apply: 'Call Virginia Legal Aid Line or use valegalaid.org zip-code lookup.',
+    phone: '1-866-534-5243', web: 'https://www.valegalaid.org',
+    criteria: { fplMax: 200 }
+  },
+  {
+    id: 'dc-lcsh', category: 'legal', scope: 'local',
+    name: 'DC Legal Aid (Legal Aid Society of DC / Legal Counsel for the Elderly / BLB)',
+    states: ['DC'],
+    desc: 'DC Legal Aid Society, Legal Counsel for the Elderly (AARP), Bread for the City Legal, Neighborhood Legal Services Program — full civil legal aid coverage.',
+    eligibility: '≤200% FPL (LCE serves DC residents 60+ regardless of income for some matters).',
+    apply: 'Call DC Legal Aid intake.',
+    phone: '202-628-1161', web: 'https://www.legalaiddc.org',
+    criteria: { fplMax: 200 }
+  },
+  {
+    id: 'probono', category: 'legal', scope: 'federal',
+    name: 'State Bar Lawyer Referral / Pro Bono',
+    states: 'ALL',
+    desc: 'Every state bar runs a lawyer referral service with reduced/free consultations, plus pro bono panels for low-income clients above legal aid cutoffs.',
+    eligibility: 'Typically ≤200–300% FPL for pro bono panels; referral service open to all.',
+    apply: 'PA Bar: 1-800-932-0311. MD Bar: 1-800-492-1964. NJ Bar: 732-249-5000. DE Bar: 302-478-8850. VA Bar: 1-800-552-7977. DC Bar: 202-626-3499.',
+    phone: '', web: 'https://www.americanbar.org/groups/legal_services/flh-home/flh-bar-directories-and-lawyer-finders/',
+    criteria: {}
+  },
+
+  // ========== INCOME & DISABILITY ==========
+  {
+    id: 'ssi', category: 'income', scope: 'federal',
+    name: 'SSI — Supplemental Security Income',
+    states: 'ALL',
+    desc: 'Monthly cash benefit for people age 65+, blind, or with a disability and very low income/assets. 2026 Federal Benefit Rate: $994/mo individual, $1,491 couple. Automatically Medicaid-eligible in most states.',
+    eligibility: 'Age 65+ OR disability/blindness; countable resources ≤$2,000 ind / $3,000 couple; income below FBR (varies). US citizen or qualified non-citizen.',
+    apply: 'Apply at SSA.gov, by phone, or at local SSA office. Disability determination through DDS.',
+    phone: '1-800-772-1213', web: 'https://www.ssa.gov/ssi',
+    criteria: { citizenshipExclude: ['undocumented','daca','visa','tps'] },
+    custom: p => {
+      const ageOrDis = (p.age !== null && p.age >= 65) || p.flags.has('disabled');
+      if (!ageOrDis) return p.flags.has('disabled') ? 'maybe' : false;
+      if (p.income !== null && p.income > 14000) return 'maybe';
+      return 'yes';
+    }
+  },
+  {
+    id: 'ssdi', category: 'income', scope: 'federal',
+    name: 'SSDI — Social Security Disability Insurance',
+    states: 'ALL',
+    desc: 'Monthly benefit for workers with sufficient work credits who become disabled. 5-month waiting period; Medicare after 24 months of entitlement. No income/asset limits beyond SGA while working.',
+    eligibility: 'Disability lasting ≥12 months or terminal; sufficient work credits (typically 5 of last 10 years worked). No income limit for non-work income.',
+    apply: 'Apply at SSA.gov or local SSA office. Consider SSDI+SSI concurrent application if low income/assets.',
+    phone: '1-800-772-1213', web: 'https://www.ssa.gov/benefits/disability/',
+    criteria: {},
+    custom: p => p.flags.has('disabled') ? 'yes' : 'maybe'
+  },
+  {
+    id: 'tanf', category: 'income', scope: 'state',
+    name: 'TANF — Temporary Assistance for Needy Families',
+    states: ['PA','NJ','MD','DE','VA','DC'],
+    desc: 'Monthly cash assistance for families with children. Amounts low ($200–$600/mo typical). Includes employment/work requirements and time limits (60 months lifetime federal).',
+    eligibility: 'Household with child <18 (or pregnant); very low income (roughly ≤50% FPL in most states); US citizen or qualified non-citizen; work requirements.',
+    apply: 'Same portals as Medicaid/SNAP (COMPASS, NJOneApp, MyDHR, DE ASSIST, CommonHelp, DC Access).',
+    phone: '', web: 'https://www.acf.hhs.gov/ofa/programs/tanf',
+    criteria: { fplMax: 75, hasAny: ['children','pregnant'], citizenshipExclude: ['undocumented','daca','visa','tps'] }
+  },
+  {
+    id: 'nj-ga', category: 'income', scope: 'state',
+    name: 'NJ General Assistance (Work First NJ GA)',
+    states: ['NJ'],
+    desc: 'Cash and Medicaid for single adults or childless couples with no dependents. ~$140–$350/mo, plus SNAP.',
+    eligibility: 'NJ resident; employable or unemployable adult with very low income and resources ≤$2,000.',
+    apply: 'Apply at county Board of Social Services or via NJOneApp.',
+    phone: '', web: 'https://www.state.nj.us/humanservices/dfd/programs/workfirstnj/',
+    criteria: { fplMax: 75 }
+  },
+  {
+    id: 'md-taf', category: 'income', scope: 'state',
+    name: 'MD Temporary Disability Assistance Program (TDAP)',
+    states: ['MD'],
+    desc: 'Cash assistance (~$185/mo) for low-income MD adults with a short-term or pending-SSI disability.',
+    eligibility: 'MD resident; disabled (any duration including interim SSI applicant); income ≤program limit.',
+    apply: 'Apply at local DSS or MyDHR.',
+    phone: '', web: 'https://dhr.maryland.gov/temporary-cash-assistance/',
+    criteria: { hasAny: ['disabled'] }
+  },
+  {
+    id: 'hcbs', category: 'income', scope: 'state',
+    name: 'Medicaid HCBS Waivers (Home & Community-Based Services)',
+    states: 'ALL',
+    desc: 'Medicaid waivers that fund personal care, adult day, respite, home mods, transportation, and other supports to keep people out of facilities. PA: OLTL waivers. NJ: MLTSS. MD: Community First / Community Options. DE: DSAAPD. VA: CCC Plus. DC: EPD Waiver.',
+    eligibility: 'Nursing-facility level of care + Medicaid financial eligibility (income typically ≤300% SSI FBR ≈ $2,982/mo in 2026). Varies by waiver.',
+    apply: 'Start with state Medicaid office or Area Agency on Aging / No Wrong Door / ADRC.',
+    phone: '', web: 'https://www.medicaid.gov/medicaid/home-community-based-services/',
+    criteria: { hasAny: ['disabled','chronic'] },
+    custom: p => {
+      if (p.housing === 'ltc' || p.housing === 'alf') return 'yes';
+      if (p.flags.has('disabled') || (p.age !== null && p.age >= 65)) return 'maybe';
+      return 'maybe';
+    }
+  },
+
+  // ========== GRANTS & EMERGENCY ASSISTANCE ==========
+  {
+    id: 'twoeleven', category: 'grants', scope: 'federal',
+    name: '2-1-1 (Local Referral Hotline)',
+    states: 'ALL',
+    desc: 'Free 24/7 hotline and web directory for local health and human service resources — rent/utility help, food, clothing, childcare, MH crisis, and more. Operated regionally (United Way in most areas).',
+    eligibility: 'No eligibility — available to anyone.',
+    apply: 'Dial 2-1-1 or text your ZIP to 898211 (most regions); visit 211.org.',
+    phone: '211', web: 'https://www.211.org',
+    criteria: {}
+  },
+  {
+    id: 'modestneeds', category: 'grants', scope: 'federal',
+    name: 'Modest Needs Foundation',
+    states: 'ALL',
+    desc: 'Short-term emergency grants ($750–$1,000 typical) paid directly to creditors for working low-income households facing unexpected expense (car repair, utility, medical bill).',
+    eligibility: 'Employed (≥30 hrs/wk typical) OR retired/disabled; income too high for most public assistance but too low for savings; above 200% FPL often qualifies.',
+    apply: 'Apply online at modestneeds.org; ~4–8 week review.',
+    phone: '', web: 'https://www.modestneeds.org',
+    criteria: { fplMin: 100, fplMax: 400 }
+  },
+  {
+    id: 'salvationarmy', category: 'grants', scope: 'federal',
+    name: 'Salvation Army — Emergency Assistance',
+    states: 'ALL',
+    desc: 'Local Salvation Army corps provide rent, utility, food, clothing, prescription, and holiday assistance. Amounts and programs vary by location.',
+    eligibility: 'Typically low-income with documented need. No religious requirement.',
+    apply: 'Call local corps office or dial 2-1-1 for nearest location.',
+    phone: '1-800-725-2769', web: 'https://www.salvationarmyusa.org',
+    criteria: { fplMax: 200 }
+  },
+  {
+    id: 'catholiccharities', category: 'grants', scope: 'federal',
+    name: 'Catholic Charities',
+    states: 'ALL',
+    desc: 'Emergency rent/utility, food, clothing, immigration legal, refugee resettlement, counseling, housing programs. Services vary by diocese. No religious requirement.',
+    eligibility: 'Varies by program; most emergency services low-income.',
+    apply: 'Find local diocese office. In DE, Catholic Charities is a LIHEAP intake site.',
+    phone: '', web: 'https://www.catholiccharitiesusa.org',
+    criteria: { fplMax: 300 }
+  },
+  {
+    id: 'svdp', category: 'grants', scope: 'federal',
+    name: 'St. Vincent de Paul Society',
+    states: 'ALL',
+    desc: 'Parish-based "conference" network providing home visits, rent/utility assistance, food, clothing, medication co-pays, and furniture. Cash grants directly to vendors.',
+    eligibility: 'Low-income with documented need; no religious requirement.',
+    apply: 'Call local parish or SVdP diocesan council; most respond within a few days.',
+    phone: '', web: 'https://ssvpusa.org',
+    criteria: { fplMax: 200 }
+  },
+
+  // ========== VETERANS ==========
+  {
+    id: 'va-healthcare', category: 'veterans', scope: 'federal',
+    name: 'VA Healthcare',
+    states: 'ALL',
+    desc: 'Comprehensive medical, mental health, dental (for some), vision, Rx, and long-term care through VA facilities or community care. Enrollment tiered by service-connection and income.',
+    eligibility: 'Veteran with qualifying discharge; priority groups by service-connected disability, POW status, Purple Heart, income (VA means test), etc.',
+    apply: 'Apply form 10-10EZ online at va.gov or at any VA medical center enrollment office.',
+    phone: '1-877-222-8387', web: 'https://www.va.gov/health-care/',
+    criteria: { hasAny: ['veteran'] }
+  },
+  {
+    id: 'va-pension', category: 'veterans', scope: 'federal',
+    name: 'VA Pension + Aid & Attendance',
+    states: 'ALL',
+    desc: 'Tax-free monthly pension for wartime veterans (and surviving spouses) age 65+ or permanently disabled. With Aid & Attendance, MAPR for a single veteran is $29,093/yr ($2,424/mo) in 2026; higher with dependents.',
+    eligibility: 'Wartime service (at least 90 days active duty, one during wartime period); age 65+ OR permanent disability; income/net worth below limits (2026 net worth cap $163,699).',
+    apply: 'Apply via va.gov, VA Regional Office, or accredited VSO (AMVETS, DAV, American Legion, VFW).',
+    phone: '1-800-827-1000', web: 'https://www.va.gov/pension/',
+    criteria: { hasAny: ['veteran'] }
+  },
+  {
+    id: 'va-caregiver', category: 'veterans', scope: 'federal',
+    name: 'VA Caregiver Support',
+    states: 'ALL',
+    desc: 'Program of Comprehensive Assistance for Family Caregivers (PCAFC) provides stipend, health insurance (CHAMPVA), training, respite, and mental health support to primary family caregivers of eligible veterans.',
+    eligibility: 'Veteran with ≥70% service-connected disability needing 6+ months of personal-care services; primary caregiver is family member.',
+    apply: 'Apply at va.gov/caregiver or call Caregiver Support Line.',
+    phone: '1-855-260-3274', web: 'https://www.caregiver.va.gov',
+    criteria: { hasAny: ['veteran','caregiver'] }
+  },
+  {
+    id: 'va-crisisline', category: 'veterans', scope: 'federal',
+    name: 'Veterans Crisis Line',
+    states: 'ALL',
+    desc: 'Free, confidential 24/7 crisis support for veterans, service members, and their loved ones. Connected through 988.',
+    eligibility: 'No eligibility — open to any veteran, service member, National Guard/Reserve, or family member.',
+    apply: 'Dial 988 and press 1, or text 838255, or chat at veteranscrisisline.net.',
+    phone: '988', web: 'https://www.veteranscrisisline.net',
+    criteria: {}
+  },
+
+  // ========== IMMIGRATION ==========
+  {
+    id: 'hias-pa', category: 'immigration', scope: 'state',
+    name: 'HIAS Pennsylvania',
+    states: ['PA'],
+    desc: 'Immigration legal services, refugee resettlement, and case management. Naturalization, asylum, U-visa/VAWA, TPS, DACA, family petitions.',
+    eligibility: 'Immigrant or refugee residing in PA; sliding-scale or free.',
+    apply: 'Call intake line.',
+    phone: '215-832-0900', web: 'https://hiaspa.org',
+    criteria: {}
+  },
+  {
+    id: 'casa-md', category: 'immigration', scope: 'state',
+    name: 'CASA (Maryland / Virginia / PA / DC)',
+    states: ['MD','VA','PA','DC'],
+    desc: 'Immigration legal, workforce, health, tenant rights, and English classes. Large regional presence in DMV and PA.',
+    eligibility: 'Immigrant workers and families; most services free or sliding-scale.',
+    apply: 'Call or visit welcome center in Silver Spring, Hyattsville, Baltimore, Langley Park, Woodbridge, Manassas, York, Allentown, or DC.',
+    phone: '1-855-626-4272', web: 'https://wearecasa.org',
+    criteria: {}
+  },
+  {
+    id: 'clinic', category: 'immigration', scope: 'federal',
+    name: 'CLINIC / Immigration Advocates — Legal Directory',
+    states: 'ALL',
+    desc: 'Catholic Legal Immigration Network directory + Immigration Advocates Network map. Find a Board of Immigration Appeals (BIA) recognized nonprofit near you.',
+    eligibility: 'No eligibility — referral tool. Most partner programs ≤200% FPL.',
+    apply: 'Search cliniclegal.org/affiliates or immigrationadvocates.org/nonprofit/legaldirectory.',
+    phone: '', web: 'https://www.immigrationadvocates.org/nonprofit/legaldirectory/',
+    criteria: {}
+  },
+
+  // ========== TRANSPORTATION ==========
+  {
+    id: 'pa-matp', category: 'transport', scope: 'state',
+    name: 'MATP — PA Medical Assistance Transportation',
+    states: ['PA'],
+    desc: 'Free/low-cost rides to Medicaid-covered medical appointments for PA Medicaid members. Operated by county — each county has its own broker/provider.',
+    eligibility: 'PA Medicaid (Medical Assistance) recipient; trip to an MA-covered service.',
+    apply: 'Call your county MATP office (1-800-842-2020 for list) at least 3 business days before appointment.',
+    phone: '1-800-842-2020', web: 'https://www.pa.gov/en/agencies/dhs/resources/transportation/medical-assistance-transportation-program.html',
+    criteria: { insurance: ['medicaid'] }
+  },
+  {
+    id: 'nj-accesslink', category: 'transport', scope: 'state',
+    name: 'NJ Access Link (ADA Paratransit)',
+    states: ['NJ'],
+    desc: 'ADA complementary paratransit for people with disabilities within 3/4 mile of NJ Transit bus routes. Advance reservation required.',
+    eligibility: 'Functional disability that prevents fixed-route use; certification required.',
+    apply: 'Call Access Link to start certification (interview + sometimes functional assessment).',
+    phone: '1-800-955-2321', web: 'https://www.njtransit.com/accessibility/access-link',
+    criteria: { hasAny: ['disabled'] }
+  },
+  {
+    id: 'md-mobility', category: 'transport', scope: 'state',
+    name: 'MTA Mobility (MD ADA Paratransit)',
+    states: ['MD'],
+    desc: 'Baltimore region ADA paratransit for certified riders. Also operates Call-A-Ride and partners with Taxi Access.',
+    eligibility: 'Functional disability preventing fixed-route use; certification required.',
+    apply: 'Apply for certification through MTA Mobility Certification Office.',
+    phone: '410-764-8181', web: 'https://www.mta.maryland.gov/mobility',
+    criteria: { hasAny: ['disabled'] }
+  },
+  {
+    id: 'de-dart', category: 'transport', scope: 'state',
+    name: 'DART Paratransit (Delaware)',
+    states: ['DE'],
+    desc: 'Statewide ADA paratransit for Delaware residents with disabilities.',
+    eligibility: 'Delaware resident with certified disability preventing fixed-route use.',
+    apply: 'Call DART Paratransit for application packet.',
+    phone: '1-800-553-3278', web: 'https://www.dartfirststate.com/information/services/paratransit/',
+    criteria: { hasAny: ['disabled'] }
+  },
+  {
+    id: 'metroaccess', category: 'transport', scope: 'local',
+    name: 'MetroAccess (WMATA — DC / close-in MD & VA)',
+    states: ['DC','MD','VA'],
+    desc: 'ADA paratransit covering DC, Montgomery/Prince George\'s MD, and Arlington/Fairfax/Alexandria/Falls Church VA. Shared ride, door-to-door.',
+    eligibility: 'Certified disability; reside/travel within WMATA service area.',
+    apply: 'Complete eligibility application + in-person assessment.',
+    phone: '202-962-2700', web: 'https://www.wmata.com/service/accessibility/metro-access/',
+    criteria: { hasAny: ['disabled'] }
+  },
+  {
+    id: 'nemt', category: 'transport', scope: 'federal',
+    name: 'Medicaid NEMT (Non-Emergency Medical Transport)',
+    states: 'ALL',
+    desc: 'Federal Medicaid entitlement: every state Medicaid program must provide transportation to covered services for enrollees with no other means. Includes rideshare in many states.',
+    eligibility: 'Medicaid enrollee; trip to Medicaid-covered service; no other reasonable transportation.',
+    apply: 'Contact your MCO member services or state Medicaid transportation broker.',
+    phone: '', web: 'https://www.medicaid.gov/medicaid/benefits/non-emergency-medical-transportation/',
+    criteria: { insurance: ['medicaid'] }
+  },
+  {
+    id: 'dav-transport', category: 'transport', scope: 'federal',
+    name: 'DAV Transportation Network',
+    states: 'ALL',
+    desc: 'Free rides to VA medical facilities by volunteer drivers, operated jointly by Disabled American Veterans and VA Voluntary Service.',
+    eligibility: 'Veteran using VA medical care.',
+    apply: 'Contact the Voluntary Service Office at your local VA medical center.',
+    phone: '', web: 'https://www.dav.org/veterans/i-need-a-ride/',
+    criteria: { hasAny: ['veteran'] }
+  },
+
+  // ========== DISEASE-SPECIFIC FOUNDATIONS & GRANTS ==========
+  {
+    id: 'cancercare', category: 'disease', scope: 'federal',
+    name: 'CancerCare — Copay & Financial Assistance',
+    states: 'ALL',
+    desc: 'Limited-grant copay assistance for specific cancer diagnoses (varies — funds open/close), plus free counseling, support groups, and small grants for transportation, home care, and child care during treatment.',
+    eligibility: 'Cancer diagnosis matching an open fund; income generally ≤500% FPL; insured for the medication.',
+    apply: 'Check open funds and apply at cancercare.org/copayfoundation, or call.',
+    phone: '1-800-813-4673', web: 'https://www.cancercare.org',
+    criteria: { fplMax: 500, dx: ['cancer_any','cancer_breast','cancer_lung','cancer_blood'] }
+  },
+  {
+    id: 'paf-copay', category: 'disease', scope: 'federal',
+    name: 'Patient Advocate Foundation — Co-Pay Relief',
+    states: 'ALL',
+    desc: 'Direct copay grants for ~30 disease funds (many cancers, autoimmune, MS, Alzheimer\'s, heart failure, sickle cell, etc.). Also runs MedCareLine and case management.',
+    eligibility: 'Insured (covers the drug); income ≤400% FPL (some funds higher); diagnosis matches an open fund.',
+    apply: 'Apply at copays.org or call. Funds open/close — check first.',
+    phone: '1-866-512-3861', web: 'https://www.copays.org',
+    criteria: { fplMax: 500, insuranceExclude: ['uninsured'],
+      dx: ['cancer_any','cancer_breast','cancer_lung','cancer_blood','autoimmune','ms','alzheimers','heart','sickle','rare','copd','parkinsons'] }
+  },
+  {
+    id: 'lls-copay', category: 'disease', scope: 'federal',
+    name: 'Leukemia & Lymphoma Society (LLS) — Co-Pay & Patient Aid',
+    states: 'ALL',
+    desc: 'Copay assistance (annual grants up to $10K+ depending on dx fund), Patient Aid grants ($100), Susan Lang Pay-It-Forward travel fund, and Information Resource Center.',
+    eligibility: 'Blood cancer diagnosis (leukemia, lymphoma, myeloma, MDS, MPN). Income ≤500% FPL for most copay funds; Patient Aid open to anyone with blood cancer.',
+    apply: 'Apply at lls.org/copay; Patient Aid via lls.org/financial-support.',
+    phone: '1-877-557-2672', web: 'https://www.lls.org',
+    criteria: { dx: ['cancer_blood','cancer_any'] }
+  },
+  {
+    id: 'familyreach', category: 'disease', scope: 'federal',
+    name: 'Family Reach — Cancer Family Living Expenses',
+    states: 'ALL',
+    desc: 'Direct payments to landlords/utilities/grocers for families navigating cancer costs. Also financial education, telephone case management, and resource navigation.',
+    eligibility: 'Patient (any age) actively in cancer treatment OR within 1 year post-treatment; financial hardship.',
+    apply: 'Provider-initiated referral via familyreach.org (or social worker/case manager).',
+    phone: '1-857-233-2764', web: 'https://familyreach.org',
+    criteria: { dx: ['cancer_any','cancer_breast','cancer_lung','cancer_blood'] }
+  },
+  {
+    id: 'komen', category: 'disease', scope: 'federal',
+    name: 'Susan G. Komen — Patient Care Center',
+    states: 'ALL',
+    desc: 'Helpline + financial assistance program (limited grants for treatment-related expenses) and breast cancer screening/diagnostic navigation.',
+    eligibility: 'Breast cancer diagnosis (or actively in diagnostic workup for grants); income ≤300% FPL typically.',
+    apply: 'Call Komen Helpline weekdays; web intake at komen.org.',
+    phone: '1-877-465-6636', web: 'https://www.komen.org/support-resources/',
+    criteria: { dx: ['cancer_breast','cancer_any'] }
+  },
+  {
+    id: 'akf-hipp', category: 'disease', scope: 'federal',
+    name: 'American Kidney Fund — HIPP Program',
+    states: 'ALL',
+    desc: 'Health Insurance Premium Program: pays Medicare/private/Marketplace premiums for dialysis or transplant patients with financial need. Also grants for ESRD-related expenses.',
+    eligibility: 'On dialysis or transplant; ≤400% FPL; not eligible for Medicaid that fully pays the premium.',
+    apply: 'Provider/social worker initiates application at kidneyfund.org/hipp.',
+    phone: '1-800-638-8299', web: 'https://www.kidneyfund.org',
+    criteria: { fplMax: 400, dx: ['esrd','transplant'] }
+  },
+  {
+    id: 'als-assoc', category: 'disease', scope: 'federal',
+    name: 'ALS Association — Care Services & Equipment Grants',
+    states: 'ALL',
+    desc: 'Equipment loan closets (wheelchairs, AAC devices, hospital beds), respite/home care grants, ALS-specialty clinic referral, and certified caregiver navigation.',
+    eligibility: 'ALS diagnosis. Most services free regardless of income (equipment loans, support groups, clinic care); financial grants need-based.',
+    apply: 'Contact your regional ALS Association chapter via als.org.',
+    phone: '1-800-782-4747', web: 'https://www.als.org',
+    criteria: { dx: ['als'] }
+  },
+  {
+    id: 'parkinsons-fdn', category: 'disease', scope: 'federal',
+    name: "Parkinson's Foundation Helpline & Aware-in-Care",
+    states: 'ALL',
+    desc: 'Helpline (multilingual) for symptom/medication questions, hospital safety kit (Aware-in-Care), care navigation, and local chapter referral. Limited respite-grant network via affiliates.',
+    eligibility: "Parkinson's disease diagnosis or caregiver; no income requirement for helpline/navigation.",
+    apply: 'Call helpline or visit parkinson.org.',
+    phone: '1-800-473-4636', web: 'https://www.parkinson.org',
+    criteria: { dx: ['parkinsons'] }
+  },
+  {
+    id: 'nmss', category: 'disease', scope: 'federal',
+    name: 'National Multiple Sclerosis Society — Financial Assistance',
+    states: 'ALL',
+    desc: 'Need-based grants for emergency expenses (rent/utilities/cooling), home/auto adaptations, and care services. Plus MS Navigator (1:1 case mgr) and MS-specialty clinic referral.',
+    eligibility: 'MS diagnosis; financial need; specific grants have varying eligibility (income, assets, urgency).',
+    apply: 'Call MS Navigator or apply at nationalmssociety.org/financial-assistance.',
+    phone: '1-800-344-4867', web: 'https://www.nationalmssociety.org',
+    criteria: { dx: ['ms'] }
+  },
+  {
+    id: 'sicklecell', category: 'disease', scope: 'federal',
+    name: 'Sickle Cell Disease Association of America — Patient Assistance',
+    states: 'ALL',
+    desc: 'Local member-org navigation (~50 chapters), advocacy, drug-trial referral, and emergency assistance funds via local chapters.',
+    eligibility: 'Sickle cell diagnosis (or trait carrier for some services).',
+    apply: 'Find local member organization at sicklecelldisease.org.',
+    phone: '1-800-421-8453', web: 'https://www.sicklecelldisease.org',
+    criteria: { dx: ['sickle'] }
+  },
+  {
+    id: 'nhf', category: 'disease', scope: 'federal',
+    name: 'National Bleeding Disorders Foundation (NHF)',
+    states: 'ALL',
+    desc: 'Insurance navigation, product safety hotline, scholarship, and HANDI info center. Local chapters offer emergency assistance.',
+    eligibility: 'Hemophilia A/B, von Willebrand disease, or other bleeding disorder.',
+    apply: 'Find local chapter at bleeding.org.',
+    phone: '1-800-424-2634', web: 'https://www.bleeding.org',
+    criteria: { dx: ['hemophilia'] }
+  },
+  {
+    id: 'cf-compass', category: 'disease', scope: 'federal',
+    name: 'CF Foundation Compass',
+    states: 'ALL',
+    desc: 'CF-specialist case management — insurance, financial, legal, and CF center navigation. Also runs the Patient Assistance program for Trikafta and other modulators.',
+    eligibility: 'Cystic fibrosis diagnosis.',
+    apply: 'Email/call Compass at cff.org/compass.',
+    phone: '1-844-266-7277', web: 'https://www.cff.org/managing-cf/cf-foundation-compass',
+    criteria: { dx: ['cf'] }
+  },
+  {
+    id: 'copd-fdn', category: 'disease', scope: 'federal',
+    name: 'COPD Foundation Information Line',
+    states: 'ALL',
+    desc: '1:1 educator support, oxygen-equipment guidance, pulmonary-rehab finder, and COPD360social patient community.',
+    eligibility: 'COPD or chronic respiratory diagnosis; no income test for information services.',
+    apply: 'Call C.O.P.D. Information Line.',
+    phone: '1-866-316-2673', web: 'https://www.copdfoundation.org',
+    criteria: { dx: ['copd'] }
+  },
+  {
+    id: 'alz-helpline', category: 'disease', scope: 'federal',
+    name: "Alzheimer's Association 24/7 Helpline + Care Navigation",
+    states: 'ALL',
+    desc: '24/7 multilingual helpline staffed by clinicians/social workers, free care consultations, MedicAlert + Safe Return enrollment, and local chapter respite/grants.',
+    eligibility: "Alzheimer's or other dementia diagnosis (or caregiver thereof); no income test for helpline.",
+    apply: 'Call 24/7 helpline.',
+    phone: '1-800-272-3900', web: 'https://www.alz.org',
+    criteria: { dx: ['alzheimers'] }
+  },
+  {
+    id: 'nami', category: 'disease', scope: 'federal',
+    name: 'NAMI HelpLine + Local Affiliates',
+    states: 'ALL',
+    desc: 'Mental health information, peer-led support groups, family-to-family education, and crisis-resource referral. Local affiliates often run respite, advocacy, and re-entry programs.',
+    eligibility: 'Anyone with a mental-health concern (patient or family); no eligibility for helpline.',
+    apply: 'Call HelpLine M–F 10am–10pm ET, text "HelpLine" to 62640, or chat at nami.org.',
+    phone: '1-800-950-6264', web: 'https://www.nami.org',
+    criteria: { dx: ['smi'] }
+  },
+  {
+    id: 'nord', category: 'disease', scope: 'federal',
+    name: 'NORD — National Organization for Rare Disorders',
+    states: 'ALL',
+    desc: 'Disease-specific patient assistance programs (insurance premium, copay, diagnostic testing, travel, medical food), plus rare-disease database and clinical-trial finder.',
+    eligibility: 'Diagnosis matching an open NORD fund (~20+ rare diseases); income ≤500% FPL typically.',
+    apply: 'Search open programs at rarediseases.org/patient-assistance-programs.',
+    phone: '1-203-744-0100', web: 'https://rarediseases.org',
+    criteria: { fplMax: 500, dx: ['rare'] }
+  },
+  {
+    id: 'helphopelive', category: 'disease', scope: 'federal',
+    name: 'Help Hope Live — Transplant & Catastrophic Injury Fundraising',
+    states: 'ALL',
+    desc: 'Tax-deductible community-fundraising platform for organ transplant, brain/spinal cord injury, or other catastrophic medical expenses. Funds are managed by HHL and paid to vendors.',
+    eligibility: 'Transplant candidate/recipient OR catastrophic injury (TBI/SCI/severe burns).',
+    apply: 'Apply at helphopelive.org; full setup once approved.',
+    phone: '1-800-642-8399', web: 'https://helphopelive.org',
+    criteria: { dx: ['transplant'] }
+  },
+  {
+    id: 'reeve', category: 'disease', scope: 'federal',
+    name: 'Christopher & Dana Reeve Foundation — Quality of Life Grants',
+    states: 'ALL',
+    desc: 'Direct-effect grants up to $25K for organizations + Paralysis Resource Center (free 1:1 information specialist for people living with paralysis and their families).',
+    eligibility: 'Paralysis (SCI, stroke, MS, ALS, cerebral palsy, or other). Information services free; financial grants flow through nonprofits.',
+    apply: 'Call PRC information specialist or visit christopherreeve.org.',
+    phone: '1-800-539-7309', web: 'https://www.christopherreeve.org',
+    criteria: {},
+    custom: p => (p.dx && (p.dx.has('rare') || p.flags.has('disabled'))) ? 'maybe' : 'maybe'
+  },
+  {
+    id: 'insulin-savings', category: 'disease', scope: 'federal',
+    name: 'Insulin $35 Cap + Manufacturer Savings (Lilly / Novo / Sanofi)',
+    states: 'ALL',
+    desc: 'Medicare Part D caps insulin at $35/mo. Lilly Insulin Value Program, Novo Nordisk MyInsulinRx, and Sanofi Insulins Valyou Savings Program offer ~$35/mo for uninsured/cash-pay.',
+    eligibility: 'Diabetes requiring insulin. Medicare Part D enrollees automatic. Manufacturer programs: usually US resident, non-Medicaid, non-VA.',
+    apply: 'Lilly: insulinaffordability.com. Novo: novocare.com. Sanofi: insulinsvalyou.com.',
+    phone: '', web: 'https://www.diabetes.org/tools-resources/affordable-insulin',
+    criteria: { dx: ['diabetes'] }
+  },
+];
+
+// ---------- County & state contacts ----------
+// Shape per state: { default: [{label, phone, note?}, ...], counties: { "County Name": [...] } }
+// Only numbers I could verify confidently are included; elsewhere the default block + 2-1-1 cover the gap.
+const CONTACTS = {
+  PA: {
+    default: [
+      { label: 'PA DHS Helpline (Medicaid / SNAP / TANF / CHIP / LIHEAP)', phone: '1-800-692-7462' },
+      { label: 'APPRISE — PA SHIP (Medicare counseling)', phone: '1-800-783-7067' },
+      { label: 'PA Link to Aging & Disability Resources', phone: '1-800-753-8827' },
+      { label: 'PA Legal Aid Network intake', phone: '1-800-322-7572' },
+      { label: 'PA Property Tax / Rent Rebate', phone: '1-888-222-9190' },
+      { label: 'PA Domestic Violence Hotline', phone: '1-800-932-4632' },
+      { label: 'MATP (Medicaid transport) county finder', phone: '1-800-842-2020' },
+    ],
+    counties: {
+      'Philadelphia': [
+        { label: 'Philadelphia Corporation for Aging (PCA)', phone: '215-765-9040' },
+        { label: 'Community Legal Services intake', phone: '215-981-3700' },
+        { label: 'SEPTA CCT Connect (paratransit)', phone: '215-580-7145' },
+        { label: 'Community Behavioral Health crisis (24/7)', phone: '215-685-6440' },
+      ],
+      'Allegheny': [
+        { label: 'Allegheny Link (Area Agency on Aging)', phone: '1-866-730-2368' },
+        { label: 'resolve Crisis Services (24/7)', phone: '1-888-796-8226' },
+        { label: 'ACCESS paratransit (Pittsburgh Regional Transit)', phone: '412-562-5353' },
+        { label: 'Neighborhood Legal Services', phone: '412-255-6700' },
+      ],
+    },
+  },
+  NJ: {
+    default: [
+      { label: 'NJ FamilyCare (Medicaid / CHIP)', phone: '1-800-701-0710' },
+      { label: 'NJ SHIP — State Health Insurance Program', phone: '1-800-792-8820' },
+      { label: 'NJ Division of Aging Services', phone: '1-877-222-3737' },
+      { label: 'Legal Services of NJ intake', phone: '1-888-576-5529' },
+      { label: 'NJ PAAD / Senior Gold / NJSave', phone: '1-800-792-9745' },
+      { label: 'NJ DV Hotline', phone: '1-800-572-7233' },
+      { label: 'NJ Transit Access Link (paratransit)', phone: '1-800-955-2321' },
+    ],
+    counties: {
+      'Essex': [
+        { label: 'Essex County Division on Aging', phone: '973-395-8375' },
+      ],
+      'Camden': [
+        { label: 'Camden County Office on Aging', phone: '856-858-3220' },
+      ],
+    },
+  },
+  MD: {
+    default: [
+      { label: 'Maryland Health Connection (Medicaid / Marketplace)', phone: '1-855-642-8572' },
+      { label: 'MD SHIP — State Health Insurance Assistance', phone: '1-800-243-3425' },
+      { label: 'MD Dept of Aging Senior Info & Assistance', phone: '1-800-243-3425' },
+      { label: 'MD OHEP / MEAP energy assistance', phone: '1-800-332-6347' },
+      { label: 'Maryland Legal Aid intake', phone: '1-866-635-2948' },
+      { label: 'MD DV Hotline', phone: '1-800-634-3577' },
+      { label: 'MTA Mobility (Baltimore paratransit)', phone: '410-764-8181' },
+    ],
+    counties: {
+      'Baltimore City': [
+        { label: 'Baltimore City CARE (aging & disability)', phone: '410-396-2273' },
+        { label: 'Behavioral Health System Baltimore (crisis)', phone: '410-433-5255' },
+      ],
+      'Montgomery': [
+        { label: 'Montgomery County Aging & Disability Services', phone: '240-777-3000' },
+        { label: 'MoCo Crisis Center (24/7)', phone: '240-777-4000' },
+      ],
+      "Prince George's": [
+        { label: "Prince George's County Aging & Disabilities", phone: '301-265-8450' },
+      ],
+    },
+  },
+  DE: {
+    default: [
+      { label: 'DE State Service Centers (benefits intake)', phone: '1-800-464-4357' },
+      { label: 'ELDERinfo — DE SHIP (Medicare counseling)', phone: '1-800-336-9500' },
+      { label: 'DE Aging & Adults with Physical Disabilities', phone: '1-800-223-9074' },
+      { label: 'CLASI — Community Legal Aid Society', phone: '302-575-0660' },
+      { label: 'DART Paratransit', phone: '1-800-553-3278' },
+      { label: 'DE Domestic Violence Hotline', phone: '1-800-701-0456' },
+    ],
+    counties: {
+      'New Castle': [
+        { label: 'Catholic Charities Wilmington (LIHEAP intake)', phone: '302-655-9624' },
+      ],
+      'Kent': [
+        { label: 'First State Community Action (LIHEAP — Kent)', phone: '302-424-6440' },
+      ],
+      'Sussex': [
+        { label: 'First State Community Action (LIHEAP — Sussex)', phone: '302-856-7761' },
+      ],
+    },
+  },
+  VA: {
+    default: [
+      { label: 'Cover Virginia (Medicaid / FAMIS)', phone: '1-855-242-8282' },
+      { label: 'VICAP — VA SHIP (Medicare counseling)', phone: '1-800-552-3402' },
+      { label: 'VA Dept for Aging & Rehabilitative Services', phone: '1-800-552-5019' },
+      { label: 'Virginia Legal Aid Line', phone: '1-866-534-5243' },
+      { label: 'VA Energy Assistance (CommonHelp)', phone: '1-855-635-4370' },
+      { label: 'VA Family Violence Hotline', phone: '1-800-838-8238' },
+    ],
+    counties: {
+      'Fairfax': [
+        { label: 'Fairfax Aging, Disability & Caregiver Resources', phone: '703-324-7948' },
+        { label: 'CSB Emergency Services (24/7)', phone: '703-573-5679' },
+        { label: 'Fairfax Connector ADA (Fastran)', phone: '703-339-7200' },
+      ],
+      'Arlington': [
+        { label: 'Arlington Aging & Disability Services', phone: '703-228-1700' },
+        { label: 'Arlington CSB 24/7 Emergency', phone: '703-228-5160' },
+      ],
+    },
+  },
+  DC: {
+    default: [
+      { label: 'DC Health Link (Medicaid / Marketplace)', phone: '1-855-532-5465' },
+      { label: 'DC Department of Aging & Community Living', phone: '202-724-5626' },
+      { label: 'DC Health Insurance Counseling Project (SHIP)', phone: '202-434-2277' },
+      { label: 'Legal Aid Society of DC', phone: '202-628-1161' },
+      { label: 'DC DHS Customer Service Center', phone: '202-727-5355' },
+      { label: 'DC Victim Hotline', phone: '1-844-443-5732' },
+      { label: 'MetroAccess (paratransit)', phone: '202-962-2700' },
+      { label: 'ACCESS HelpLine (DC behavioral crisis, 24/7)', phone: '1-888-793-4357' },
+    ],
+    counties: {},
+  },
+};
+
+// Always-available national hotlines (rendered as a universal footer on county panel)
+const NATIONAL_CONTACTS = [
+  { label: '2-1-1 (local health & human services)', phone: '211' },
+  { label: '988 Suicide & Crisis Lifeline', phone: '988' },
+  { label: 'Veterans Crisis Line', phone: '988 press 1 (or text 838255)' },
+  { label: 'National DV Hotline', phone: '1-800-799-7233' },
+  { label: 'SSA — SSI / SSDI / retirement', phone: '1-800-772-1213' },
+  { label: '1-800-MEDICARE', phone: '1-800-633-4227' },
+];
+
+function renderCountyContacts(p) {
+  const el = document.getElementById('countyContact');
+  if (!p.state) {
+    el.innerHTML = `
+      <div class="county-panel">
+        <h3>Quick contacts (select state for local numbers)</h3>
+        <div class="county-grid">
+          ${NATIONAL_CONTACTS.map(c => `<div class="contact-row"><span class="contact-label">${c.label}</span><a href="tel:${c.phone.replace(/[^0-9+]/g,'')}">${c.phone}</a></div>`).join('')}
+        </div>
+      </div>`;
+    return;
+  }
+  const stateBlock = CONTACTS[p.state] || { default: [], counties: {} };
+  const countyBlock = (p.county && stateBlock.counties[p.county]) || null;
+  const stateName = ({PA:'Pennsylvania',NJ:'New Jersey',MD:'Maryland',DE:'Delaware',VA:'Virginia',DC:'DC'})[p.state] || p.state;
+  const row = c => `<div class="contact-row"><span class="contact-label">${c.label}</span><a href="tel:${c.phone.replace(/[^0-9+]/g,'')}">${c.phone}</a></div>`;
+  const countyHtml = countyBlock
+    ? `<h3 style="margin-top:0.75rem;">${p.county} County contacts</h3>
+       <div class="county-grid">${countyBlock.map(row).join('')}</div>`
+    : (p.county ? `<p style="margin-top:0.5rem; font-size:0.82rem; color:var(--text-muted);">For ${p.county} County-specific contacts, dial <strong>2-1-1</strong> or call the statewide helplines above.</p>` : '');
+  el.innerHTML = `
+    <div class="county-panel">
+      <h3>${stateName} statewide contacts</h3>
+      <div class="county-grid">${stateBlock.default.map(row).join('')}</div>
+      ${countyHtml}
+      <h3 style="margin-top:0.75rem;">National</h3>
+      <div class="county-grid">${NATIONAL_CONTACTS.map(row).join('')}</div>
+    </div>`;
+}
+
+// ---------- Match engine ----------
+// Returns { verdict: 'yes'|'maybe'|'no', reasons: [...] } for a resource given a profile.
+function evaluate(r, p) {
+  const reasons = [];
+  let verdict = 'yes';
+
+  // Geographic scope
+  if (r.states && r.states !== 'ALL') {
+    if (!p.state) { verdict = 'maybe'; reasons.push('Select state to confirm'); }
+    else if (!r.states.includes(p.state)) return { verdict: 'no', reasons: [`Not available in ${p.state}`] };
+  }
+
+  const c = r.criteria || {};
+
+  // FPL max
+  if (c.fplMax !== undefined) {
+    if (p.fpl === null) { if (verdict === 'yes') verdict = 'maybe'; reasons.push('Enter income to confirm FPL'); }
+    else if (p.fpl > c.fplMax) return { verdict: 'no', reasons: [`Income ${p.fpl}% FPL exceeds ${c.fplMax}% cap`] };
+    else reasons.push(`Income ${p.fpl}% FPL ≤ ${c.fplMax}% cap`);
+  }
+  // FPL floor
+  if (c.fplMin !== undefined && p.fpl !== null && p.fpl < c.fplMin) {
+    return { verdict: 'no', reasons: [`Income ${p.fpl}% FPL below ${c.fplMin}% floor (may qualify for Medicaid instead)`] };
+  }
+
+  // Age
+  if (c.ageMin !== undefined) {
+    if (p.age === null) { if (verdict === 'yes') verdict = 'maybe'; reasons.push('Enter age to confirm'); }
+    else if (p.age < c.ageMin) return { verdict: 'no', reasons: [`Age ${p.age} below ${c.ageMin} minimum`] };
+  }
+  if (c.ageMax !== undefined && p.age !== null && p.age > c.ageMax) {
+    return { verdict: 'no', reasons: [`Age ${p.age} above ${c.ageMax} maximum`] };
+  }
+
+  // Insurance required (any one of)
+  if (c.insurance && c.insurance.length) {
+    const any = c.insurance.some(t => p.insurance.has(t));
+    if (!any) {
+      if (p.insurance.size === 0) { if (verdict === 'yes') verdict = 'maybe'; reasons.push('Requires: ' + c.insurance.join(' or ')); }
+      else return { verdict: 'no', reasons: [`Requires ${c.insurance.join(' or ')}`] };
+    }
+  }
+  // Insurance excluded
+  if (c.insuranceExclude && c.insuranceExclude.length) {
+    const hit = c.insuranceExclude.find(t => p.insurance.has(t));
+    if (hit) return { verdict: 'no', reasons: [`Not for ${hit} holders`] };
+  }
+
+  // Housing
+  if (c.housing && c.housing.length) {
+    if (!p.housing) { if (verdict === 'yes') verdict = 'maybe'; reasons.push('Select housing status'); }
+    else if (!c.housing.includes(p.housing)) return { verdict: 'no', reasons: [`Housing status not eligible`] };
+  }
+
+  // Flags (any / all)
+  if (c.hasAny && c.hasAny.length) {
+    const got = c.hasAny.some(f => p.flags.has(f) || p.incsrc.has(f));
+    if (!got) { if (verdict === 'yes') verdict = 'maybe'; reasons.push('Needs: ' + c.hasAny.join(' or ')); }
+  }
+  if (c.hasAll && c.hasAll.length) {
+    const missing = c.hasAll.filter(f => !p.flags.has(f) && !p.incsrc.has(f));
+    if (missing.length) return { verdict: 'no', reasons: [`Requires ${missing.join(', ')}`] };
+  }
+
+  // Citizenship
+  if (c.citizenshipExclude && c.citizenshipExclude.length && p.citizen) {
+    if (c.citizenshipExclude.includes(p.citizen)) {
+      return { verdict: 'no', reasons: ['Requires citizen or qualified immigration status'] };
+    }
+  }
+  if (c.citizenship && c.citizenship.length && p.citizen && !c.citizenship.includes(p.citizen)) {
+    return { verdict: 'no', reasons: ['Citizenship status not eligible'] };
+  }
+
+  // Income sources
+  if (c.incomeSources && c.incomeSources.length) {
+    const any = c.incomeSources.some(s => p.incsrc.has(s));
+    if (!any) { if (verdict === 'yes') verdict = 'maybe'; reasons.push('Income source check'); }
+  }
+
+  // Diagnoses (any-of)
+  if (c.dx && c.dx.length) {
+    const any = c.dx.some(d => p.dx && p.dx.has(d));
+    if (!any) {
+      if (!p.dx || p.dx.size === 0) { if (verdict === 'yes') verdict = 'maybe'; reasons.push('Diagnosis match required'); }
+      else return { verdict: 'no', reasons: ['Diagnosis not in eligible list'] };
+    } else {
+      reasons.push('Diagnosis matches program');
+    }
+  }
+
+  // Custom predicate override (object return wins; 'no' wins over 'yes'; 'maybe' softens)
+  if (r.custom) {
+    const out = r.custom(p);
+    if (out === false) return { verdict: 'no', reasons: reasons.length ? reasons : ['Does not meet program rules'] };
+    if (out === 'maybe') { if (verdict === 'yes') verdict = 'maybe'; reasons.push('Additional criteria apply — verify'); }
+    if (typeof out === 'object' && out && out.verdict) return out;
+  }
+
+  return { verdict, reasons };
+}
+
+// Run all resources against profile; returns grouped { yes: [], maybe: [], no: [] }
+function evaluateAll(p) {
+  const out = { yes: [], maybe: [], no: [] };
+  RESOURCES.forEach(r => {
+    const e = evaluate(r, p);
+    out[e.verdict].push({ resource: r, reasons: e.reasons });
+  });
+  return out;
+}
+
+function readProfile() {
+  const getChecked = id => Array.from(document.querySelectorAll(`#${id} input[type=checkbox]:checked`)).map(i => i.value);
+  const state = document.getElementById('f_state').value || '';
+  const county = document.getElementById('f_county').value || '';
+  const age = parseInt(document.getElementById('f_age').value, 10);
+  const hh = parseInt(document.getElementById('f_hh').value, 10) || 1;
+  const income = parseFloat(document.getElementById('f_income').value);
+  const insurance = new Set(getChecked('f_insurance'));
+  const citizen = document.getElementById('f_citizen').value || '';
+  const incsrc = new Set(getChecked('f_incsrc'));
+  const housing = document.getElementById('f_housing').value || '';
+  const flags = new Set(getChecked('f_flags'));
+  const dx = new Set(getChecked('f_dx'));
+  // Auto-set legacy flags so older resource criteria still match
+  if (dx.size) flags.add('chronic');
+  if (dx.has('cancer_any') || dx.has('cancer_breast') || dx.has('cancer_lung') || dx.has('cancer_blood')) flags.add('cancer');
+  if (dx.has('hiv')) flags.add('hiv');
+  const fpl = fplPct(isFinite(income) ? income : null, hh);
+  return {
+    state, county,
+    age: isFinite(age) ? age : null,
+    hh, income: isFinite(income) ? income : null,
+    fpl, insurance, citizen, incsrc, housing, flags, dx,
+    isSenior: isFinite(age) ? age >= 65 : false,
+    isChild: isFinite(age) ? age < 18 : false,
+    hasMedicare: new Set(getChecked('f_insurance')).has('medicare') || new Set(getChecked('f_insurance')).has('medicare_adv'),
+  };
+}
+
+// ---------- County dropdown population ----------
+function populateCounties() {
+  const st = document.getElementById('f_state').value;
+  const sel = document.getElementById('f_county');
+  sel.innerHTML = '';
+  if (!st || !COUNTIES[st]) {
+    sel.innerHTML = '<option value="">— Select state first —</option>';
+    return;
+  }
+  const first = document.createElement('option');
+  first.value = ''; first.textContent = 'All / unspecified';
+  sel.appendChild(first);
+  COUNTIES[st].forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = c;
+    sel.appendChild(opt);
+  });
+}
+
+// ---------- Print-only handout header ----------
+function renderPrintHeader(p) {
+  const el = document.getElementById('printHeader');
+  if (!el) return;
+  const name = document.getElementById('f_pname').value.trim();
+  const mrn  = document.getElementById('f_pmrn').value.trim();
+  const date = document.getElementById('f_pdate').value;
+  const clin = document.getElementById('f_pclin').value.trim();
+  const note = document.getElementById('f_pnotes').value.trim();
+  const stateName = ({PA:'Pennsylvania',NJ:'New Jersey',MD:'Maryland',DE:'Delaware',VA:'Virginia',DC:'DC'})[p.state] || '';
+  const dateOut = date || new Date().toISOString().slice(0,10);
+  const summaryParts = [];
+  if (p.state) summaryParts.push(`${stateName}${p.county ? ' / ' + p.county : ''}`);
+  if (p.age !== null) summaryParts.push(`age ${p.age}`);
+  if (p.hh) summaryParts.push(`HH of ${p.hh}`);
+  if (p.income !== null) summaryParts.push(`$${p.income.toLocaleString()}/yr`);
+  if (p.fpl !== null) summaryParts.push(`${p.fpl}% FPL`);
+  if (p.insurance.size) summaryParts.push('insurance: ' + Array.from(p.insurance).join(', '));
+  if (p.housing) summaryParts.push('housing: ' + p.housing);
+  if (p.dx && p.dx.size) summaryParts.push('dx: ' + Array.from(p.dx).join(', '));
+  el.innerHTML = `
+    <h2>Local Resource Eligibility — Patient Handout</h2>
+    <div class="ph-meta">
+      ${name ? `<span><strong>For:</strong> ${name}</span>` : ''}
+      ${mrn  ? `<span><strong>MRN:</strong> ${mrn}</span>` : ''}
+      <span><strong>Date:</strong> ${dateOut}</span>
+      ${clin ? `<span><strong>Clinician:</strong> ${clin}</span>` : ''}
+    </div>
+    ${summaryParts.length ? `<div class="ph-summary"><strong>Intake summary:</strong> ${summaryParts.join(' · ')}</div>` : ''}
+    ${note ? `<div class="ph-notes"><strong>Notes:</strong> ${note}</div>` : ''}
+  `;
+}
+
+// ---------- FPL hint + strip ----------
+function renderFplHint() {
+  const hint = document.getElementById('fplHint');
+  const p = readProfile();
+  if (p.fpl === null) {
+    hint.textContent = 'Enter income to see FPL %.';
+    return;
+  }
+  hint.innerHTML = `<strong>${p.fpl}% FPL</strong> — 100% FPL for household of ${p.hh} is $${fplFor(p.hh).toLocaleString()}/yr`;
+}
+
+function renderFplStrip() {
+  const p = readProfile();
+  const strip = document.getElementById('fplStrip');
+  const fplClass = p.fpl === null ? '' : (p.fpl <= 150 ? 'accent' : (p.fpl <= 300 ? 'warn' : ''));
+  const stateName = ({PA:'Pennsylvania',NJ:'New Jersey',MD:'Maryland',DE:'Delaware',VA:'Virginia',DC:'DC'})[p.state] || '—';
+  strip.innerHTML = `
+    <div class="fpl-stat"><div class="l">State</div><div class="v accent">${p.state || '—'}</div><div class="s">${stateName}${p.county ? ' · ' + p.county : ''}</div></div>
+    <div class="fpl-stat"><div class="l">Household</div><div class="v">${p.hh}</div><div class="s">${p.age !== null ? 'patient age ' + p.age : 'age unspecified'}</div></div>
+    <div class="fpl-stat"><div class="l">Annual income</div><div class="v">${p.income !== null ? '$' + p.income.toLocaleString() : '—'}</div><div class="s">100% FPL = $${fplFor(p.hh).toLocaleString()}</div></div>
+    <div class="fpl-stat"><div class="l">Income as % FPL</div><div class="v ${fplClass}">${p.fpl !== null ? p.fpl + '%' : '—'}</div><div class="s">${p.fpl === null ? 'enter income' : (p.fpl <= 138 ? 'Medicaid range (expansion states)' : p.fpl <= 200 ? 'many low-income programs' : p.fpl <= 400 ? 'ACA subsidy range' : 'above most program thresholds')}</div></div>
+  `;
+}
+
+// ---------- Results rendering ----------
+const CATEGORIES = [
+  { id: 'utility',     label: 'Utility & Phone',      icon: '⚡' },
+  { id: 'housing',     label: 'Housing',              icon: '🏠' },
+  { id: 'pharma',      label: 'Rx / Pharmacy',        icon: '💊' },
+  { id: 'insurance',   label: 'Health Insurance',     icon: '🩺' },
+  { id: 'food',        label: 'Food & Nutrition',     icon: '🥬' },
+  { id: 'legal',       label: 'Legal Aid',            icon: '⚖️' },
+  { id: 'income',      label: 'Income & Disability',  icon: '💵' },
+  { id: 'grants',      label: 'Grants & Emergency',   icon: '🆘' },
+  { id: 'veterans',    label: 'Veterans',             icon: '🎖️' },
+  { id: 'immigration', label: 'Immigration',          icon: '🌎' },
+  { id: 'transport',   label: 'Transportation',       icon: '🚗' },
+  { id: 'disease',     label: 'Disease-Specific',     icon: '🧬' },
+];
+const CAT_BY_ID = Object.fromEntries(CATEGORIES.map(c => [c.id, c]));
+
+let activeCategoryFilters = new Set();
+let showNo = false;
+
+function renderFilterChips(buckets) {
+  const bar = document.getElementById('filterChips');
+  const all = [...buckets.yes, ...buckets.maybe, ...(showNo ? buckets.no : [])];
+  const counts = {};
+  all.forEach(m => { counts[m.resource.category] = (counts[m.resource.category] || 0) + 1; });
+  bar.innerHTML = CATEGORIES.map(cat => {
+    const n = counts[cat.id] || 0;
+    if (n === 0) return '';
+    const active = activeCategoryFilters.has(cat.id) ? 'active' : '';
+    return `<span class="chip ${active}" data-cat="${cat.id}">${cat.icon} ${cat.label}<span class="count">${n}</span></span>`;
+  }).join('');
+  bar.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const c = chip.dataset.cat;
+      if (activeCategoryFilters.has(c)) activeCategoryFilters.delete(c);
+      else activeCategoryFilters.add(c);
+      renderResults();
+    });
+  });
+}
+
+function toggleCard(id) {
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+  if (card) card.classList.toggle('open');
+}
+
+function renderCard(match) {
+  const r = match.resource;
+  const v = match.verdict || 'yes';
+  const verdictLabel = { yes: 'Likely eligible', maybe: 'Possibly eligible', no: 'Not eligible' }[v];
+  const cat = CAT_BY_ID[r.category] || { icon: '', label: r.category };
+  const reasonsHtml = match.reasons && match.reasons.length
+    ? `<div class="card-reasons">${match.reasons.join(' · ')}</div>` : '';
+  const scope = r.scope === 'federal' ? 'Federal' : r.scope === 'state' ? 'State' : r.scope === 'local' ? 'Local' : '';
+  const statesText = r.states === 'ALL' ? 'All US' : (Array.isArray(r.states) ? r.states.join(', ') : '');
+  const contactRows = [];
+  if (r.phone) contactRows.push(`<div class="contact-row"><span class="contact-label">Phone</span><a href="tel:${r.phone.replace(/[^0-9+]/g,'')}">${r.phone}</a></div>`);
+  if (r.web) contactRows.push(`<div class="contact-row"><span class="contact-label">Website</span><a href="${r.web.startsWith('http') ? r.web : 'https://' + r.web}" target="_blank" rel="noopener">${r.web.replace(/^https?:\/\//,'')}</a></div>`);
+  const contactHtml = contactRows.length ? `<div class="card-contact">${contactRows.join('')}</div>` : '';
+  return `
+    <div class="card ${v}" data-id="${r.id}">
+      <div class="card-header" onclick="toggleCard('${r.id}')">
+        <div style="min-width:0;flex:1;">
+          <div class="card-title-row">
+            <span class="card-title">${cat.icon} ${r.name}</span>
+            <span class="card-category">${scope}${statesText ? ' · ' + statesText : ''}</span>
+          </div>
+          ${reasonsHtml}
+        </div>
+        <span class="card-verdict ${v}">${verdictLabel}</span>
+        <span class="expand-arrow">▾</span>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><div class="l">What it is</div><div class="v">${r.desc}</div></div>
+        <div class="card-row"><div class="l">Eligibility</div><div class="v">${r.eligibility}</div></div>
+        <div class="card-row"><div class="l">How to apply</div><div class="v">${r.apply}</div></div>
+        ${contactHtml}
+      </div>
+    </div>`;
+}
+
+function renderGroup(title, klass, matches) {
+  if (!matches.length) return '';
+  const cards = matches.map(m => renderCard({ ...m, verdict: klass })).join('');
+  return `<div class="group-heading ${klass}"><span>${title}</span><span class="pill">${matches.length}</span></div>${cards}`;
+}
+
+function applyFilters(arr) {
+  if (!activeCategoryFilters.size) return arr;
+  return arr.filter(m => activeCategoryFilters.has(m.resource.category));
+}
+
+function renderResults() {
+  const p = readProfile();
+  const buckets = evaluateAll(p);
+  // Sort within each bucket alphabetically by category then name
+  const sortFn = (a, b) => (a.resource.category + a.resource.name).localeCompare(b.resource.category + b.resource.name);
+  buckets.yes.sort(sortFn); buckets.maybe.sort(sortFn); buckets.no.sort(sortFn);
+
+  renderFilterChips(buckets);
+
+  const yes = applyFilters(buckets.yes);
+  const maybe = applyFilters(buckets.maybe);
+  const no = applyFilters(buckets.no);
+
+  const bar = document.getElementById('resultsBar');
+  const totalShown = yes.length + maybe.length + (showNo ? no.length : 0);
+  bar.innerHTML = `
+    <span>Showing <strong>${totalShown}</strong> of ${RESOURCES.length} programs
+      ${activeCategoryFilters.size ? ' · ' + activeCategoryFilters.size + ' filter(s) active' : ''}</span>
+    <span class="toggle-no" id="toggleNo">${showNo ? 'Hide' : 'Show'} not-eligible (${no.length})</span>`;
+  document.getElementById('toggleNo').addEventListener('click', () => { showNo = !showNo; renderResults(); });
+
+  const container = document.getElementById('cardsContainer');
+  if (totalShown === 0) {
+    container.innerHTML = `<div class="empty-state"><h3>No matches to show</h3><p>Clear category filters or add more intake detail above.</p></div>`;
+    return;
+  }
+  container.innerHTML = [
+    renderGroup('Likely eligible', 'yes', yes),
+    renderGroup('Possibly eligible — verify', 'maybe', maybe),
+    showNo ? renderGroup('Not eligible (intake excludes)', 'no', no) : '',
+  ].join('');
+}
+
+// ---------- Persistence (localStorage + URL params) ----------
+// Patient name, MRN, and notes are deliberately excluded — they're PHI.
+const PERSIST = {
+  text:   ['f_age','f_hh','f_income','f_pclin','f_pdate'],
+  select: ['f_state','f_county','f_citizen','f_housing'],
+  checks: ['f_insurance','f_incsrc','f_flags','f_dx'],
+};
+const STORAGE_KEY = 'mabf-resources-intake-v1';
+
+function serializeIntake() {
+  const out = {};
+  PERSIST.text.concat(PERSIST.select).forEach(id => {
+    const v = document.getElementById(id).value;
+    if (v) out[id] = v;
+  });
+  PERSIST.checks.forEach(id => {
+    const checked = Array.from(document.querySelectorAll(`#${id} input:checked`)).map(i => i.value);
+    if (checked.length) out[id] = checked.join(',');
+  });
+  return out;
+}
+
+function applyIntake(obj) {
+  // Apply state first so county options exist before we set county
+  if (obj.f_state !== undefined) {
+    document.getElementById('f_state').value = obj.f_state;
+    populateCounties();
+  }
+  if (obj.f_county !== undefined) document.getElementById('f_county').value = obj.f_county;
+  PERSIST.text.forEach(id => { if (obj[id] !== undefined) document.getElementById(id).value = obj[id]; });
+  PERSIST.select.filter(id => id !== 'f_state' && id !== 'f_county').forEach(id => {
+    if (obj[id] !== undefined) document.getElementById(id).value = obj[id];
+  });
+  PERSIST.checks.forEach(id => {
+    if (obj[id] !== undefined) {
+      const values = obj[id].split(',');
+      document.querySelectorAll(`#${id} input`).forEach(i => { i.checked = values.includes(i.value); });
+    }
+  });
+}
+
+function saveLocal() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(serializeIntake())); } catch (e) {}
+}
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) applyIntake(JSON.parse(raw));
+  } catch (e) {}
+}
+function clearLocal() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+}
+function loadFromUrl() {
+  const params = new URLSearchParams(location.search);
+  if (![...params.keys()].length) return false;
+  const obj = {};
+  params.forEach((v, k) => { obj[k] = v; });
+  applyIntake(obj);
+  return true;
+}
+
+function copyShareLink(btn) {
+  const params = new URLSearchParams(serializeIntake()).toString();
+  const url = location.origin + location.pathname + (params ? '?' + params : '');
+  navigator.clipboard.writeText(url).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Link copied';
+    setTimeout(() => { btn.textContent = orig; }, 1800);
+  }).catch(() => {
+    prompt('Copy this link:', url);
+  });
+}
+
+// ---------- Wire up listeners ----------
+function onChange() {
+  const p = readProfile();
+  renderFplHint();
+  renderFplStrip();
+  renderCountyContacts(p);
+  renderResults();
+  renderPrintHeader(p);
+  saveLocal();
+}
+function resetForm() {
+  document.querySelectorAll('#intakePanel input, #intakePanel select').forEach(el => {
+    if (el.type === 'checkbox') el.checked = false;
+    else if (el.id === 'f_hh') el.value = '1';
+    else el.value = '';
+  });
+  populateCounties();
+  clearLocal();
+  // Clear URL params so refresh doesn't re-apply them
+  if (location.search) history.replaceState({}, '', location.pathname);
+  onChange();
+}
+
+document.getElementById('f_state').addEventListener('change', () => { populateCounties(); onChange(); });
+['f_county','f_age','f_hh','f_income','f_citizen','f_housing','f_pname','f_pmrn','f_pdate','f_pclin','f_pnotes'].forEach(id => {
+  document.getElementById(id).addEventListener('input', onChange);
+  document.getElementById(id).addEventListener('change', onChange);
+});
+['f_insurance','f_incsrc','f_flags','f_dx'].forEach(id => {
+  document.getElementById(id).addEventListener('change', onChange);
+});
+
+// Initial render — URL params win over localStorage; both are read once at boot
+populateCounties();
+const restoredFromUrl = loadFromUrl();
+if (!restoredFromUrl) loadLocal();
+onChange();
+</script>
+</body>
+</html>
