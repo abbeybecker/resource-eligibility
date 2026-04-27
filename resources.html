@@ -392,8 +392,6 @@ body {
   .check-grid { grid-template-columns: 1fr; }
 }
 
-.print-only { display: none; }
-
 @media print {
   body { background: white; }
   .header, .intake-panel, .filter-chips, .results-bar, .footer, .expand-arrow, .btn, .nav-tabs { display: none !important; }
@@ -405,23 +403,6 @@ body {
   .fpl-strip { break-inside: avoid; }
   .county-panel { break-inside: avoid; }
   a { color: #000; text-decoration: none; }
-  .print-only { display: block !important; }
-  .print-header {
-    border-bottom: 2px solid #000;
-    padding: 0 0 0.5rem;
-    margin-bottom: 0.75rem;
-    font-size: 0.85rem;
-  }
-  .print-header h2 {
-    font-family: 'Fraunces', Georgia, serif;
-    font-size: 1.3rem;
-    margin-bottom: 0.25rem;
-  }
-  .print-header .ph-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.85rem; margin-top: 0.3rem; }
-  .print-header .ph-meta span { white-space: nowrap; }
-  .print-header .ph-meta strong { font-weight: 600; }
-  .print-header .ph-summary { margin-top: 0.4rem; font-size: 0.82rem; color: #333; }
-  .print-header .ph-notes { margin-top: 0.4rem; padding: 0.4rem 0.6rem; background: #f5f5f5; border-left: 3px solid #999; font-size: 0.82rem; }
   @page { margin: 0.5in; }
 }
 </style>
@@ -445,25 +426,11 @@ body {
 <div class="layout">
 
   <aside class="intake-panel" id="intakePanel">
-    <div class="panel-title">Patient intake</div>
-    <div class="panel-sub">Fields are optional — results refine as you add detail. Nothing is stored or sent anywhere.</div>
+    <div class="panel-title">Intake</div>
+    <div class="panel-sub">Fields are optional — results refine as you add detail. Nothing is sent anywhere; intake is saved locally in your browser only.</div>
 
     <div class="field-group">
-      <label class="field-label">Print handout label (optional)</label>
-      <div class="inline-row">
-        <input type="text" class="input" id="f_pname" placeholder="Patient name / initials">
-        <input type="text" class="input" id="f_pmrn" placeholder="MRN / chart #">
-      </div>
-      <div class="inline-row" style="margin-top:0.4rem;">
-        <input type="date" class="input" id="f_pdate">
-        <input type="text" class="input" id="f_pclin" placeholder="Clinician / case mgr">
-      </div>
-      <input type="text" class="input" id="f_pnotes" style="margin-top:0.4rem;" placeholder="Notes for this handout (optional)">
-      <div class="field-hint">These appear only at the top of the printed PDF.</div>
-    </div>
-
-    <div class="field-group">
-      <label class="field-label">State</label>
+      <label class="field-label" for="f_state">State</label>
       <select class="select" id="f_state">
         <option value="">— Select —</option>
         <option value="PA">Pennsylvania</option>
@@ -501,15 +468,15 @@ body {
 
     <div class="field-group">
       <label class="field-label">Insurance status (check all)</label>
-      <div class="check-grid" id="f_insurance">
-        <label class="check-item"><input type="checkbox" value="uninsured"> Uninsured</label>
-        <label class="check-item"><input type="checkbox" value="medicaid"> Medicaid</label>
-        <label class="check-item"><input type="checkbox" value="medicare"> Medicare (Original)</label>
-        <label class="check-item"><input type="checkbox" value="medicare_adv"> Medicare Advantage</label>
-        <label class="check-item"><input type="checkbox" value="commercial"> Commercial / Employer</label>
-        <label class="check-item"><input type="checkbox" value="tricare"> TRICARE</label>
-        <label class="check-item"><input type="checkbox" value="va"> VA Healthcare</label>
-        <label class="check-item"><input type="checkbox" value="marketplace"> ACA Marketplace</label>
+      <div class="check-grid" id="f_insurance" role="group" aria-label="Insurance status">
+        <label class="check-item" for="ck_ins_uninsured"><input id="ck_ins_uninsured" type="checkbox" value="uninsured"> Uninsured</label>
+        <label class="check-item" for="ck_ins_medicaid"><input id="ck_ins_medicaid" type="checkbox" value="medicaid"> Medicaid</label>
+        <label class="check-item" for="ck_ins_medicare"><input id="ck_ins_medicare" type="checkbox" value="medicare"> Medicare (Original)</label>
+        <label class="check-item" for="ck_ins_medicare_adv"><input id="ck_ins_medicare_adv" type="checkbox" value="medicare_adv"> Medicare Advantage</label>
+        <label class="check-item" for="ck_ins_commercial"><input id="ck_ins_commercial" type="checkbox" value="commercial"> Commercial / Employer</label>
+        <label class="check-item" for="ck_ins_tricare"><input id="ck_ins_tricare" type="checkbox" value="tricare"> TRICARE</label>
+        <label class="check-item" for="ck_ins_va"><input id="ck_ins_va" type="checkbox" value="va"> VA Healthcare</label>
+        <label class="check-item" for="ck_ins_marketplace"><input id="ck_ins_marketplace" type="checkbox" value="marketplace"> ACA Marketplace</label>
       </div>
     </div>
 
@@ -531,19 +498,19 @@ body {
 
     <div class="field-group">
       <label class="field-label">Income sources (check all)</label>
-      <div class="check-grid" id="f_incsrc">
-        <label class="check-item"><input type="checkbox" value="employment"> Employment</label>
-        <label class="check-item"><input type="checkbox" value="selfemp"> Self-employment</label>
-        <label class="check-item"><input type="checkbox" value="ssdi"> SSDI</label>
-        <label class="check-item"><input type="checkbox" value="ssi"> SSI</label>
-        <label class="check-item"><input type="checkbox" value="ssret"> SS Retirement</label>
-        <label class="check-item"><input type="checkbox" value="pension"> Pension</label>
-        <label class="check-item"><input type="checkbox" value="unemp"> Unemployment</label>
-        <label class="check-item"><input type="checkbox" value="tanf"> TANF</label>
-        <label class="check-item"><input type="checkbox" value="childsup"> Child support</label>
-        <label class="check-item"><input type="checkbox" value="alimony"> Alimony</label>
-        <label class="check-item"><input type="checkbox" value="none"> No income</label>
-        <label class="check-item"><input type="checkbox" value="other_inc"> Other</label>
+      <div class="check-grid" id="f_incsrc" role="group" aria-label="Income sources">
+        <label class="check-item" for="ck_inc_employment"><input id="ck_inc_employment" type="checkbox" value="employment"> Employment</label>
+        <label class="check-item" for="ck_inc_selfemp"><input id="ck_inc_selfemp" type="checkbox" value="selfemp"> Self-employment</label>
+        <label class="check-item" for="ck_inc_ssdi"><input id="ck_inc_ssdi" type="checkbox" value="ssdi"> SSDI</label>
+        <label class="check-item" for="ck_inc_ssi"><input id="ck_inc_ssi" type="checkbox" value="ssi"> SSI</label>
+        <label class="check-item" for="ck_inc_ssret"><input id="ck_inc_ssret" type="checkbox" value="ssret"> SS Retirement</label>
+        <label class="check-item" for="ck_inc_pension"><input id="ck_inc_pension" type="checkbox" value="pension"> Pension</label>
+        <label class="check-item" for="ck_inc_unemp"><input id="ck_inc_unemp" type="checkbox" value="unemp"> Unemployment</label>
+        <label class="check-item" for="ck_inc_tanf"><input id="ck_inc_tanf" type="checkbox" value="tanf"> TANF</label>
+        <label class="check-item" for="ck_inc_childsup"><input id="ck_inc_childsup" type="checkbox" value="childsup"> Child support</label>
+        <label class="check-item" for="ck_inc_alimony"><input id="ck_inc_alimony" type="checkbox" value="alimony"> Alimony</label>
+        <label class="check-item" for="ck_inc_none"><input id="ck_inc_none" type="checkbox" value="none"> No income</label>
+        <label class="check-item" for="ck_inc_other"><input id="ck_inc_other" type="checkbox" value="other_inc"> Other</label>
       </div>
     </div>
 
@@ -564,42 +531,42 @@ body {
 
     <div class="field-group">
       <label class="field-label">Situational factors (check all that apply)</label>
-      <div class="check-grid" id="f_flags">
-        <label class="check-item"><input type="checkbox" value="veteran"> Veteran</label>
-        <label class="check-item"><input type="checkbox" value="pregnant"> Pregnant</label>
-        <label class="check-item"><input type="checkbox" value="disabled"> Disabled</label>
-        <label class="check-item"><input type="checkbox" value="children"> Children &lt;18</label>
-        <label class="check-item"><input type="checkbox" value="eviction"> Facing eviction / foreclosure</label>
-        <label class="check-item"><input type="checkbox" value="utility_shutoff"> Utility shutoff risk</label>
-        <label class="check-item"><input type="checkbox" value="caregiver"> Has caregiver / is one</label>
+      <div class="check-grid" id="f_flags" role="group" aria-label="Situational factors">
+        <label class="check-item" for="ck_fl_veteran"><input id="ck_fl_veteran" type="checkbox" value="veteran"> Veteran</label>
+        <label class="check-item" for="ck_fl_pregnant"><input id="ck_fl_pregnant" type="checkbox" value="pregnant"> Pregnant</label>
+        <label class="check-item" for="ck_fl_disabled"><input id="ck_fl_disabled" type="checkbox" value="disabled"> Disabled</label>
+        <label class="check-item" for="ck_fl_children"><input id="ck_fl_children" type="checkbox" value="children"> Children &lt;18</label>
+        <label class="check-item" for="ck_fl_eviction"><input id="ck_fl_eviction" type="checkbox" value="eviction"> Facing eviction / foreclosure</label>
+        <label class="check-item" for="ck_fl_utility_shutoff"><input id="ck_fl_utility_shutoff" type="checkbox" value="utility_shutoff"> Utility shutoff risk</label>
+        <label class="check-item" for="ck_fl_caregiver"><input id="ck_fl_caregiver" type="checkbox" value="caregiver"> Has caregiver / is one</label>
       </div>
     </div>
 
     <div class="field-group">
       <label class="field-label">Major diagnoses (check all that apply)</label>
-      <div class="check-grid" id="f_dx">
-        <label class="check-item"><input type="checkbox" value="cancer_any"> Cancer (any)</label>
-        <label class="check-item"><input type="checkbox" value="cancer_breast"> Breast cancer</label>
-        <label class="check-item"><input type="checkbox" value="cancer_lung"> Lung cancer</label>
-        <label class="check-item"><input type="checkbox" value="cancer_blood"> Blood cancer (leuk/lymph/myeloma)</label>
-        <label class="check-item"><input type="checkbox" value="hiv"> HIV / AIDS</label>
-        <label class="check-item"><input type="checkbox" value="esrd"> Kidney disease / ESRD / dialysis</label>
-        <label class="check-item"><input type="checkbox" value="diabetes"> Diabetes</label>
-        <label class="check-item"><input type="checkbox" value="heart"> Heart disease / CHF</label>
-        <label class="check-item"><input type="checkbox" value="copd"> COPD / chronic lung</label>
-        <label class="check-item"><input type="checkbox" value="als"> ALS</label>
-        <label class="check-item"><input type="checkbox" value="parkinsons"> Parkinson's</label>
-        <label class="check-item"><input type="checkbox" value="alzheimers"> Alzheimer's / dementia</label>
-        <label class="check-item"><input type="checkbox" value="ms"> Multiple sclerosis</label>
-        <label class="check-item"><input type="checkbox" value="autoimmune"> Lupus / RA / autoimmune</label>
-        <label class="check-item"><input type="checkbox" value="sickle"> Sickle cell disease</label>
-        <label class="check-item"><input type="checkbox" value="hemophilia"> Hemophilia / bleeding d/o</label>
-        <label class="check-item"><input type="checkbox" value="cf"> Cystic fibrosis</label>
-        <label class="check-item"><input type="checkbox" value="hep_c"> Hepatitis C</label>
-        <label class="check-item"><input type="checkbox" value="transplant"> Organ transplant</label>
-        <label class="check-item"><input type="checkbox" value="smi"> Severe mental illness</label>
-        <label class="check-item"><input type="checkbox" value="rare"> Rare disease (other)</label>
-        <label class="check-item"><input type="checkbox" value="chronic"> Other chronic illness</label>
+      <div class="check-grid" id="f_dx" role="group" aria-label="Major diagnoses">
+        <label class="check-item" for="ck_dx_cancer_any"><input id="ck_dx_cancer_any" type="checkbox" value="cancer_any"> Cancer (any)</label>
+        <label class="check-item" for="ck_dx_cancer_breast"><input id="ck_dx_cancer_breast" type="checkbox" value="cancer_breast"> Breast cancer</label>
+        <label class="check-item" for="ck_dx_cancer_lung"><input id="ck_dx_cancer_lung" type="checkbox" value="cancer_lung"> Lung cancer</label>
+        <label class="check-item" for="ck_dx_cancer_blood"><input id="ck_dx_cancer_blood" type="checkbox" value="cancer_blood"> Blood cancer (leuk/lymph/myeloma)</label>
+        <label class="check-item" for="ck_dx_hiv"><input id="ck_dx_hiv" type="checkbox" value="hiv"> HIV / AIDS</label>
+        <label class="check-item" for="ck_dx_esrd"><input id="ck_dx_esrd" type="checkbox" value="esrd"> Kidney disease / ESRD / dialysis</label>
+        <label class="check-item" for="ck_dx_diabetes"><input id="ck_dx_diabetes" type="checkbox" value="diabetes"> Diabetes</label>
+        <label class="check-item" for="ck_dx_heart"><input id="ck_dx_heart" type="checkbox" value="heart"> Heart disease / CHF</label>
+        <label class="check-item" for="ck_dx_copd"><input id="ck_dx_copd" type="checkbox" value="copd"> COPD / chronic lung</label>
+        <label class="check-item" for="ck_dx_als"><input id="ck_dx_als" type="checkbox" value="als"> ALS</label>
+        <label class="check-item" for="ck_dx_parkinsons"><input id="ck_dx_parkinsons" type="checkbox" value="parkinsons"> Parkinson's</label>
+        <label class="check-item" for="ck_dx_alzheimers"><input id="ck_dx_alzheimers" type="checkbox" value="alzheimers"> Alzheimer's / dementia</label>
+        <label class="check-item" for="ck_dx_ms"><input id="ck_dx_ms" type="checkbox" value="ms"> Multiple sclerosis</label>
+        <label class="check-item" for="ck_dx_autoimmune"><input id="ck_dx_autoimmune" type="checkbox" value="autoimmune"> Lupus / RA / autoimmune</label>
+        <label class="check-item" for="ck_dx_sickle"><input id="ck_dx_sickle" type="checkbox" value="sickle"> Sickle cell disease</label>
+        <label class="check-item" for="ck_dx_hemophilia"><input id="ck_dx_hemophilia" type="checkbox" value="hemophilia"> Hemophilia / bleeding d/o</label>
+        <label class="check-item" for="ck_dx_cf"><input id="ck_dx_cf" type="checkbox" value="cf"> Cystic fibrosis</label>
+        <label class="check-item" for="ck_dx_hep_c"><input id="ck_dx_hep_c" type="checkbox" value="hep_c"> Hepatitis C</label>
+        <label class="check-item" for="ck_dx_transplant"><input id="ck_dx_transplant" type="checkbox" value="transplant"> Organ transplant</label>
+        <label class="check-item" for="ck_dx_smi"><input id="ck_dx_smi" type="checkbox" value="smi"> Severe mental illness</label>
+        <label class="check-item" for="ck_dx_rare"><input id="ck_dx_rare" type="checkbox" value="rare"> Rare disease (other)</label>
+        <label class="check-item" for="ck_dx_chronic"><input id="ck_dx_chronic" type="checkbox" value="chronic"> Other chronic illness</label>
       </div>
     </div>
 
@@ -611,12 +578,11 @@ body {
       <button class="btn btn-secondary btn-full" onclick="resetForm()">Reset all</button>
     </div>
     <div class="field-hint" style="margin-top:0.5rem;">
-      Intake (excluding patient name / MRN / notes) is saved in your browser and restored on next visit.
+      Intake is saved in your browser and restored on next visit.
     </div>
   </aside>
 
   <main class="results-panel">
-    <div class="print-only print-header" id="printHeader"></div>
     <div class="fpl-strip" id="fplStrip"></div>
     <div class="filter-chips" id="filterChips"></div>
     <div class="results-bar" id="resultsBar"></div>
@@ -652,6 +618,16 @@ const COUNTIES = {
   DE: ['Kent','New Castle','Sussex'],
   VA: ['Accomack','Albemarle','Alexandria','Arlington','Augusta','Bedford','Campbell','Charlottesville','Chesapeake','Chesterfield','Culpeper','Fairfax','Fauquier','Frederick','Fredericksburg','Hampton','Hanover','Harrisonburg','Henrico','James City','Lee','Loudoun','Lynchburg','Manassas','Montgomery','Newport News','Norfolk','Petersburg','Pittsylvania','Portsmouth','Prince William','Pulaski','Richmond City','Roanoke','Rockingham','Russell','Shenandoah','Spotsylvania','Stafford','Suffolk','Tazewell','Virginia Beach','Washington','Williamsburg','Winchester','Wise','Wythe','York'],
   DC: ['Washington, DC']
+};
+
+// ---------- State code → display name ----------
+const STATE_NAMES = {
+  PA: 'Pennsylvania',
+  NJ: 'New Jersey',
+  MD: 'Maryland',
+  DE: 'Delaware',
+  VA: 'Virginia',
+  DC: 'DC',
 };
 
 // ---------- Resource database ----------
@@ -1883,7 +1859,7 @@ function renderCountyContacts(p) {
   }
   const stateBlock = CONTACTS[p.state] || { default: [], counties: {} };
   const countyBlock = (p.county && stateBlock.counties[p.county]) || null;
-  const stateName = ({PA:'Pennsylvania',NJ:'New Jersey',MD:'Maryland',DE:'Delaware',VA:'Virginia',DC:'DC'})[p.state] || p.state;
+  const stateName = STATE_NAMES[p.state] || p.state;
   const row = c => `<div class="contact-row"><span class="contact-label">${c.label}</span><a href="tel:${c.phone.replace(/[^0-9+]/g,'')}">${c.phone}</a></div>`;
   const countyHtml = countyBlock
     ? `<h3 style="margin-top:0.75rem;">${p.county} County contacts</h3>
@@ -2059,39 +2035,6 @@ function populateCounties() {
   });
 }
 
-// ---------- Print-only handout header ----------
-function renderPrintHeader(p) {
-  const el = document.getElementById('printHeader');
-  if (!el) return;
-  const name = document.getElementById('f_pname').value.trim();
-  const mrn  = document.getElementById('f_pmrn').value.trim();
-  const date = document.getElementById('f_pdate').value;
-  const clin = document.getElementById('f_pclin').value.trim();
-  const note = document.getElementById('f_pnotes').value.trim();
-  const stateName = ({PA:'Pennsylvania',NJ:'New Jersey',MD:'Maryland',DE:'Delaware',VA:'Virginia',DC:'DC'})[p.state] || '';
-  const dateOut = date || new Date().toISOString().slice(0,10);
-  const summaryParts = [];
-  if (p.state) summaryParts.push(`${stateName}${p.county ? ' / ' + p.county : ''}`);
-  if (p.age !== null) summaryParts.push(`age ${p.age}`);
-  if (p.hh) summaryParts.push(`HH of ${p.hh}`);
-  if (p.income !== null) summaryParts.push(`$${p.income.toLocaleString()}/yr`);
-  if (p.fpl !== null) summaryParts.push(`${p.fpl}% FPL`);
-  if (p.insurance.size) summaryParts.push('insurance: ' + Array.from(p.insurance).join(', '));
-  if (p.housing) summaryParts.push('housing: ' + p.housing);
-  if (p.dx && p.dx.size) summaryParts.push('dx: ' + Array.from(p.dx).join(', '));
-  el.innerHTML = `
-    <h2>Local Resource Eligibility — Patient Handout</h2>
-    <div class="ph-meta">
-      ${name ? `<span><strong>For:</strong> ${name}</span>` : ''}
-      ${mrn  ? `<span><strong>MRN:</strong> ${mrn}</span>` : ''}
-      <span><strong>Date:</strong> ${dateOut}</span>
-      ${clin ? `<span><strong>Clinician:</strong> ${clin}</span>` : ''}
-    </div>
-    ${summaryParts.length ? `<div class="ph-summary"><strong>Intake summary:</strong> ${summaryParts.join(' · ')}</div>` : ''}
-    ${note ? `<div class="ph-notes"><strong>Notes:</strong> ${note}</div>` : ''}
-  `;
-}
-
 // ---------- FPL hint + strip ----------
 function renderFplHint() {
   const hint = document.getElementById('fplHint');
@@ -2107,7 +2050,7 @@ function renderFplStrip() {
   const p = readProfile();
   const strip = document.getElementById('fplStrip');
   const fplClass = p.fpl === null ? '' : (p.fpl <= 150 ? 'accent' : (p.fpl <= 300 ? 'warn' : ''));
-  const stateName = ({PA:'Pennsylvania',NJ:'New Jersey',MD:'Maryland',DE:'Delaware',VA:'Virginia',DC:'DC'})[p.state] || '—';
+  const stateName = STATE_NAMES[p.state] || '—';
   strip.innerHTML = `
     <div class="fpl-stat"><div class="l">State</div><div class="v accent">${p.state || '—'}</div><div class="s">${stateName}${p.county ? ' · ' + p.county : ''}</div></div>
     <div class="fpl-stat"><div class="l">Household</div><div class="v">${p.hh}</div><div class="s">${p.age !== null ? 'patient age ' + p.age : 'age unspecified'}</div></div>
@@ -2242,9 +2185,8 @@ function renderResults() {
 }
 
 // ---------- Persistence (localStorage + URL params) ----------
-// Patient name, MRN, and notes are deliberately excluded — they're PHI.
 const PERSIST = {
-  text:   ['f_age','f_hh','f_income','f_pclin','f_pdate'],
+  text:   ['f_age','f_hh','f_income'],
   select: ['f_state','f_county','f_citizen','f_housing'],
   checks: ['f_insurance','f_incsrc','f_flags','f_dx'],
 };
@@ -2322,7 +2264,6 @@ function onChange() {
   renderFplStrip();
   renderCountyContacts(p);
   renderResults();
-  renderPrintHeader(p);
   saveLocal();
 }
 function resetForm() {
@@ -2339,7 +2280,7 @@ function resetForm() {
 }
 
 document.getElementById('f_state').addEventListener('change', () => { populateCounties(); onChange(); });
-['f_county','f_age','f_hh','f_income','f_citizen','f_housing','f_pname','f_pmrn','f_pdate','f_pclin','f_pnotes'].forEach(id => {
+['f_county','f_age','f_hh','f_income','f_citizen','f_housing'].forEach(id => {
   document.getElementById(id).addEventListener('input', onChange);
   document.getElementById(id).addEventListener('change', onChange);
 });
