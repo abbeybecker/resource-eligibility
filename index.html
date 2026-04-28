@@ -628,7 +628,7 @@ const RESOURCES = [
     desc: 'Federal block grant, state-administered. Heating & cooling bill assistance, crisis grants for shutoffs, and weatherization referrals.',
     eligibility: 'Generally ≤150% FPL or ≤60% state median income; must be responsible for home energy costs. Thresholds vary by state.',
     apply: 'Apply through your state LIHEAP office or county assistance office. Season typically Nov–Apr (crisis year-round in most states).',
-    phone: '1-866-674-6327', web: 'https://www.acf.hhs.gov/ocs/programs/liheap',
+    phone: '', web: 'https://www.acf.hhs.gov/ocs/programs/liheap',
     criteria: { fplMax: 150, housing: ['renter','owner','transitional','doubled'] }
   },
   {
@@ -638,7 +638,7 @@ const RESOURCES = [
     desc: 'Discounted electric/gas rates for PECO customers in SE Pennsylvania. Bills capped as % of income; arrears forgiveness after on-time payments.',
     eligibility: '≤150% FPL; must be a PECO residential customer in name on the account.',
     apply: 'Call PECO Universal Services or apply in person at a CAP agency.',
-    phone: '1-800-774-7040', web: 'https://www.peco.com/WaysToSave/ForYourHome/Pages/CAP.aspx',
+    phone: '', web: 'https://www.peco.com/WaysToSave/ForYourHome/Pages/CAP.aspx',
     criteria: { fplMax: 150, housing: ['renter','owner'] }
   },
   {
@@ -648,7 +648,7 @@ const RESOURCES = [
     desc: 'Philadelphia Gas Works affordability plan. Fixed monthly bill based on income; arrears forgiven 1/36 per on-time payment.',
     eligibility: '≤150% FPL; PGW residential gas customer in Philadelphia.',
     apply: 'Apply at PGW CRP centers or online.',
-    phone: '215-235-1000', web: 'https://www.pgworks.com/residential/ways-to-save/customer-assistance-programs/crp',
+    phone: '', web: 'https://www.pgworks.com/residential/ways-to-save/customer-assistance-programs/crp',
     criteria: { fplMax: 150, housing: ['renter','owner'] }
   },
   {
@@ -658,7 +658,7 @@ const RESOURCES = [
     desc: 'Emergency grants for past-due electric/gas/water bills. Many PA utilities partner (PECO, PGW, PPL, Duquesne, Columbia Gas).',
     eligibility: '≤200% FPL typically; must have received a shutoff notice or been shut off.',
     apply: 'Apply via Dollar Energy Fund portal or at partner agency.',
-    phone: '1-866-762-2348', web: 'https://www.dollarenergy.org/need-help/',
+    phone: '', web: 'https://www.dollarenergy.org/need-help/',
     criteria: { fplMax: 200, hasAny: ['utility_shutoff'] }
   },
   {
@@ -668,7 +668,7 @@ const RESOURCES = [
     desc: 'Maryland Office of Home Energy Programs — heating (MEAP), electric (EUSP), arrears (Arrearage Retirement), and weatherization referrals.',
     eligibility: '≤175% FPL for MEAP/EUSP.',
     apply: 'Apply online at MyDHR or visit local energy assistance office.',
-    phone: '1-800-332-6347', web: 'https://dhr.maryland.gov/office-of-home-energy-programs/',
+    phone: '', web: 'https://dhr.maryland.gov/office-of-home-energy-programs/',
     criteria: { fplMax: 175, housing: ['renter','owner','transitional'] }
   },
   {
@@ -678,7 +678,7 @@ const RESOURCES = [
     desc: 'Monthly credits on electric/gas bills; combines with NJ LIHEAP. Also includes Fresh Start arrears forgiveness for clients current on USF for 12 months.',
     eligibility: '≤60% state median income (roughly ≤200% FPL for most households).',
     apply: 'Apply with LIHEAP application via DCAid portal.',
-    phone: '1-800-510-3102', web: 'https://www.nj.gov/bpu/assistance/programs/',
+    phone: '', web: 'https://www.nj.gov/bpu/assistance/programs/',
     criteria: { fplMax: 200, housing: ['renter','owner'] }
   },
   {
@@ -688,7 +688,7 @@ const RESOURCES = [
     desc: 'Up to $700 one-time for households facing electric/gas shutoff who do not qualify for LIHEAP/USF.',
     eligibility: '≤400% FPL with documented shutoff notice or arrears.',
     apply: 'Apply via NJ SHARES / DCAid.',
-    phone: '1-732-982-8710', web: 'https://www.njpoweron.org',
+    phone: '', web: 'https://www.njpoweron.org',
     criteria: { fplMax: 400, hasAny: ['utility_shutoff'] }
   },
   {
@@ -698,7 +698,7 @@ const RESOURCES = [
     desc: 'Delaware LIHEAP (heating/cooling) and Delaware Energy Assistance Program — crisis grants and weatherization.',
     eligibility: '≤200% FPL.',
     apply: 'Apply at Catholic Charities (New Castle), First State Community Action (Kent/Sussex), or online.',
-    phone: '1-800-464-4357', web: 'https://dhss.delaware.gov/dhss/dss/liheap.html',
+    phone: '', web: 'https://dhss.delaware.gov/dhss/dss/liheap.html',
     criteria: { fplMax: 200, housing: ['renter','owner'] }
   },
   {
@@ -708,7 +708,7 @@ const RESOURCES = [
     desc: 'Fuel Assistance (Nov–Jan), Cooling Assistance (Jun–Aug), and Crisis Assistance for shutoffs/heating emergencies.',
     eligibility: '≤150% FPL (Fuel/Cooling), crisis year-round.',
     apply: 'Apply through CommonHelp (Virginia DSS).',
-    phone: '1-855-635-4370', web: 'https://www.dss.virginia.gov/benefit/ea.cgi',
+    phone: '', web: 'https://www.dss.virginia.gov/benefit/ea.cgi',
     criteria: { fplMax: 150 }
   },
   {
@@ -718,7 +718,7 @@ const RESOURCES = [
     desc: 'FCC program: $9.25/mo discount on phone or internet ($34.25 on Tribal lands). Can combine with tribal programs.',
     eligibility: '≤135% FPL OR participation in Medicaid, SNAP, SSI, FPHA, Veterans Pension.',
     apply: 'Apply at LifelineSupport.org.',
-    phone: '1-800-234-9473', web: 'https://www.lifelinesupport.org/',
+    phone: '', web: 'https://www.lifelinesupport.org/',
     criteria: {},
     custom: p => p.fpl !== null && p.fpl <= 135 ? true :
                  (p.insurance.has('medicaid') || p.incsrc.has('ssi') || p.flags.has('veteran') ? true : 'maybe')
@@ -752,7 +752,7 @@ const RESOURCES = [
     desc: 'Rental arrears and forward-month assistance; most state ERAPs have wound down but many counties + DC still operate programs. Eviction-prevention component often active.',
     eligibility: '≤80% AMI (usually matches 200–300% FPL); documented COVID-era or current housing instability.',
     apply: 'Call 2-1-1 for current local program. DC ERAP via DHS.',
-    phone: '211', web: 'https://www.consumerfinance.gov/coronavirus/mortgage-and-housing-assistance/renter-protections/find-help-with-rent-and-utilities/',
+    phone: '', web: 'https://www.consumerfinance.gov/coronavirus/mortgage-and-housing-assistance/renter-protections/find-help-with-rent-and-utilities/',
     criteria: { housing: ['renter','transitional','doubled'], fplMax: 300, hasAny: ['eviction'] }
   },
   {
@@ -762,7 +762,7 @@ const RESOURCES = [
     desc: 'Loans (repayable) to bring a mortgage current and cover up to 24 months of payments for Pennsylvania homeowners facing foreclosure.',
     eligibility: 'Must have received Act 91 foreclosure notice; delinquency due to circumstances beyond your control; reasonable prospect of resuming full payments.',
     apply: 'Apply within 33 days of receiving Act 91 notice through a HEMAP-approved counseling agency.',
-    phone: '1-800-342-2397', web: 'https://www.phfa.org/hemap/',
+    phone: '', web: 'https://www.phfa.org/hemap/',
     criteria: { housing: ['owner'], hasAny: ['eviction'] }
   },
   {
@@ -772,7 +772,7 @@ const RESOURCES = [
     desc: 'Annual rebate up to $1,000 for eligible Pennsylvanians on property taxes or rent paid the prior year.',
     eligibility: 'Age 65+ OR widow/widower 50+ OR disabled 18+; income ≤$46,520 (excludes half of Social Security).',
     apply: 'File form PA-1000 by June 30 each year; free help at APPRISE and local Area Agencies on Aging.',
-    phone: '1-888-222-9190', web: 'https://www.revenue.pa.gov/IncentivesCreditsPrograms/PropertyTaxRentRebateProgram/',
+    phone: '', web: 'https://www.revenue.pa.gov/IncentivesCreditsPrograms/PropertyTaxRentRebateProgram/',
     criteria: { housing: ['renter','owner'] },
     custom: p => {
       if (!(p.isSenior || p.flags.has('disabled') || (p.age !== null && p.age >= 50))) return false;
@@ -787,7 +787,7 @@ const RESOURCES = [
     desc: 'Limits property tax based on household income. Most homeowners ≤$60k combined gross income qualify for a credit.',
     eligibility: 'Homeowner; combined gross household income ≤ approx. $60,000; net worth <$200,000 (excluding home).',
     apply: 'File SDAT Form HTC by Oct 1 each year.',
-    phone: '1-410-767-4433', web: 'https://dat.maryland.gov/realproperty/Pages/Homeowners\'-Property-Tax-Credit-Program.aspx',
+    phone: '', web: 'https://dat.maryland.gov/realproperty/Pages/Homeowners\'-Property-Tax-Credit-Program.aspx',
     criteria: { housing: ['owner'] },
     custom: p => (p.income !== null && p.income > 60000) ? false : (p.income === null ? 'maybe' : 'yes')
   },
@@ -798,7 +798,7 @@ const RESOURCES = [
     desc: 'Entry point for emergency shelter, transitional housing, Rapid Re-Housing (RRH), and Permanent Supportive Housing (PSH). Most areas use a Coordinated Entry assessment.',
     eligibility: 'Currently homeless, fleeing DV, or at imminent risk of homelessness.',
     apply: 'Call 2-1-1 or the local CoC hotline for Coordinated Entry.',
-    phone: '211', web: 'https://www.hudexchange.info/programs/coc/',
+    phone: '', web: 'https://www.hudexchange.info/programs/coc/',
     criteria: { housing: ['homeless','transitional','doubled','other_h'] }
   },
   {
@@ -840,7 +840,7 @@ const RESOURCES = [
     desc: 'Nonprofit clearinghouse: searchable directory of manufacturer PAPs, copay cards, disease-based funds, free/low-cost clinics, diagnostic assistance, and camps.',
     eligibility: 'No eligibility — it\'s a directory/search tool. Programs listed have varying criteria.',
     apply: 'Search needymeds.org by drug name or diagnosis.',
-    phone: '1-800-503-6897', web: 'https://www.needymeds.org',
+    phone: '', web: 'https://www.needymeds.org',
     criteria: {}
   },
   {
@@ -850,7 +850,7 @@ const RESOURCES = [
     desc: 'Copay & premium assistance for people with insurance. Disease-specific funds (cancer, MS, rheumatologic, rare disease, etc.); open/closed status changes — check fund availability.',
     eligibility: 'Must have insurance covering the medication; income typically ≤500% FPL (varies by fund); diagnosis matches an open fund.',
     apply: 'Apply at healthwellfoundation.org after confirming a fund is open.',
-    phone: '1-800-675-8416', web: 'https://www.healthwellfoundation.org',
+    phone: '', web: 'https://www.healthwellfoundation.org',
     requiresDx: true,
     criteria: { fplMax: 500, insuranceExclude: ['uninsured'], hasAny: ['chronic','cancer','hiv'] }
   },
@@ -861,7 +861,7 @@ const RESOURCES = [
     desc: 'Copay, travel, and insurance premium assistance for 70+ disease funds. Primarily serves Medicare beneficiaries.',
     eligibility: 'Medicare beneficiary (most funds); income ≤500% FPL (varies); diagnosis matches open fund.',
     apply: 'Check open funds at panfoundation.org; apply by phone or online.',
-    phone: '1-866-316-7263', web: 'https://www.panfoundation.org',
+    phone: '', web: 'https://www.panfoundation.org',
     requiresDx: true,
     criteria: { fplMax: 500, hasAny: ['chronic','cancer','hiv'] },
     custom: p => (p.hasMedicare || p.insurance.has('medicare_adv')) ? 'yes' : 'maybe'
@@ -873,7 +873,7 @@ const RESOURCES = [
     desc: 'Nonprofit mail-order pharmacy. Low flat fees per 90-day supply for 500+ generic medications. Works for uninsured or those with high copays.',
     eligibility: '≤400% FPL typically.',
     apply: 'Download enrollment form at rxoutreach.org or call.',
-    phone: '1-888-796-1234', web: 'https://rxoutreach.org',
+    phone: '', web: 'https://rxoutreach.org',
     criteria: { fplMax: 400 }
   },
   {
@@ -903,7 +903,7 @@ const RESOURCES = [
     desc: 'PA-funded wrap-around drug coverage for seniors. Copay: $6 generic / $9 brand. Works alongside Part D (acts as secondary).',
     eligibility: 'Age 65+; PA resident ≥90 days; single income ≤$14,500 / couple ≤$17,700 (prior-year).',
     apply: 'Apply via APPRISE or Area Agency on Aging.',
-    phone: '1-800-225-7223', web: 'https://www.pace.pa.gov',
+    phone: '', web: 'https://www.pace.pa.gov',
     criteria: { ageMin: 65 },
     custom: p => {
       if (!(p.age !== null && p.age >= 65) || p.state !== 'PA') return false;
@@ -919,7 +919,7 @@ const RESOURCES = [
     desc: 'Expanded tier of PA PACE. Copays: $8 generic / $15 brand, plus a monthly Part D premium deducted if paired with a Part D plan.',
     eligibility: 'Age 65+; PA resident; single income $14,501–$33,500 / couple $17,701–$41,500.',
     apply: 'Apply via APPRISE or Area Agency on Aging; one combined PACE/PACENET application.',
-    phone: '1-800-225-7223', web: 'https://www.pace.pa.gov',
+    phone: '', web: 'https://www.pace.pa.gov',
     criteria: { ageMin: 65 },
     custom: p => {
       if (!(p.age !== null && p.age >= 65) || p.state !== 'PA') return false;
@@ -935,7 +935,7 @@ const RESOURCES = [
     desc: 'NJ drug coverage: $5 generic / $7 brand. Works with Part D (enrollees are auto-enrolled in Extra Help application).',
     eligibility: 'Age 65+ OR disabled receiving SSDI; NJ resident; single income ≤$54,943 / couple ≤$62,390 (2026).',
     apply: 'Apply at NJSave.nj.gov (single app for PAAD, Senior Gold, Lifeline, USF, LIHEAP).',
-    phone: '1-800-792-9745', web: 'https://www.state.nj.us/humanservices/doas/services/paad/',
+    phone: '', web: 'https://www.state.nj.us/humanservices/doas/services/paad/',
     criteria: {},
     custom: p => {
       if (p.state !== 'NJ') return false;
@@ -953,7 +953,7 @@ const RESOURCES = [
     desc: 'NJ tier above PAAD. 50% co-pay share plus $15 after a $2,000 annual out-of-pocket, up to an annual cap.',
     eligibility: 'Age 65+ OR disabled; NJ resident; income just above PAAD cap (single $54,943–$64,943; couple $62,390–$70,690 — 2026).',
     apply: 'Apply via NJSave.nj.gov.',
-    phone: '1-800-792-9745', web: 'https://www.state.nj.us/humanservices/doas/services/seniorgold/',
+    phone: '', web: 'https://www.state.nj.us/humanservices/doas/services/seniorgold/',
     criteria: {},
     custom: p => {
       if (p.state !== 'NJ') return false;
@@ -971,7 +971,7 @@ const RESOURCES = [
     desc: 'Up to $50/month toward Medicare Part D premiums. Does not cover copays.',
     eligibility: 'MD resident with Medicare; household income ≤300% FPL.',
     apply: 'Apply via Maryland Health Connection or call SPDAP.',
-    phone: '1-800-551-5995', web: 'https://marylandspdap.com',
+    phone: '', web: 'https://marylandspdap.com',
     criteria: { fplMax: 300, insurance: ['medicare','medicare_adv'] }
   },
   {
@@ -981,7 +981,7 @@ const RESOURCES = [
     desc: 'Delaware pays up to $3,000/yr per person for Part D premiums and drug costs for Medicare beneficiaries without other drug coverage.',
     eligibility: 'DE resident; Medicare eligible; ≤200% FPL OR significant Rx expenses ≥40% of annual income.',
     apply: 'Apply via DHSS Division of Services for Aging and Adults with Physical Disabilities.',
-    phone: '1-800-464-4357', web: 'https://dhss.delaware.gov/dhss/dsaapd/dpap.html',
+    phone: '', web: 'https://dhss.delaware.gov/dhss/dsaapd/dpap.html',
     criteria: { insurance: ['medicare','medicare_adv'] },
     custom: p => {
       if (p.state !== 'DE') return false;
@@ -1009,7 +1009,7 @@ const RESOURCES = [
     desc: 'Low- or no-cost comprehensive coverage for children under 19 in households above Medicaid limits. PA CHIP / NJ FamilyCare Kids / MD Children\'s Health Program / DE CHIP / FAMIS VA / DC Healthy Families.',
     eligibility: 'Children <19, household income roughly ≤300–400% FPL (varies by state).',
     apply: 'Same portals as Medicaid above; one combined application.',
-    phone: '1-877-543-7669', web: 'https://www.insurekidsnow.gov',
+    phone: '', web: 'https://www.insurekidsnow.gov',
     criteria: { ageMax: 18, fplMax: 400 },
     custom: p => {
       if (!p.flags.has('children') && !(p.age !== null && p.age < 19)) return false;
@@ -1024,7 +1024,7 @@ const RESOURCES = [
     desc: 'Premium tax credits and cost-sharing reductions for private plans. PA: Pennie. NJ: GetCoveredNJ. MD: Maryland Health Connection. DE/VA: healthcare.gov. DC: DC Health Link.',
     eligibility: 'Income ≥100% FPL. Enhanced ARPA/IRA premium tax credits (no 400% FPL cliff) expired after 2025 — verify current-year subsidy structure. Not eligible for other affordable coverage (Medicaid/Medicare/job-based).',
     apply: 'Open Enrollment Nov 1–Jan 15 each year; Special Enrollment for qualifying life events and ≤150% FPL.',
-    phone: '1-800-318-2596', web: 'https://www.healthcare.gov',
+    phone: '', web: 'https://www.healthcare.gov',
     criteria: { fplMin: 100, insuranceExclude: ['medicare','medicaid','medicare_adv'] }
   },
   {
@@ -1054,7 +1054,7 @@ const RESOURCES = [
     desc: 'Medication, insurance premium, and care-gap assistance for people with HIV. Includes ADAP (AIDS Drug Assistance Program) in every state.',
     eligibility: 'HIV diagnosis; income typically ≤500% FPL (state-specific); uninsured or underinsured.',
     apply: 'Contact state ADAP office or Ryan White Part B provider.',
-    phone: '1-800-448-0440', web: 'https://ryanwhite.hrsa.gov',
+    phone: '', web: 'https://ryanwhite.hrsa.gov',
     requiresDx: true,
     criteria: { fplMax: 500, hasAny: ['hiv'] }
   },
@@ -1067,7 +1067,7 @@ const RESOURCES = [
     desc: 'Monthly benefit loaded on EBT card for groceries. Amount scales with household size and income.',
     eligibility: 'Gross income ≤130% FPL, net ≤100% FPL. Asset test in some states. US citizen or qualified non-citizen (most LPRs after 5 years, refugees/asylees, children).',
     apply: 'PA: COMPASS. NJ: NJOneApp. MD: MyDHR. DE: DE ASSIST. VA: CommonHelp. DC: DC Access.',
-    phone: '1-800-221-5689', web: 'https://www.fns.usda.gov/snap',
+    phone: '', web: 'https://www.fns.usda.gov/snap',
     criteria: { fplMax: 130, citizenshipExclude: ['undocumented','visa','daca','tps'] }
   },
   {
@@ -1117,7 +1117,7 @@ const RESOURCES = [
     desc: 'Emergency groceries, often same-day. TEFAP (The Emergency Food Assistance Program) supplies most pantries with USDA food. No application for most pantries.',
     eligibility: 'Self-attested need at most pantries. TEFAP box: ≤185% FPL.',
     apply: 'Call 2-1-1 or search feedingamerica.org/find-your-local-foodbank.',
-    phone: '211', web: 'https://www.feedingamerica.org/find-your-local-foodbank',
+    phone: '', web: 'https://www.feedingamerica.org/find-your-local-foodbank',
     criteria: {}
   },
 
@@ -1129,7 +1129,7 @@ const RESOURCES = [
     desc: 'National searchable directory of free/low-cost legal aid organizations by state and issue (housing, family, benefits, immigration, consumer, disability).',
     eligibility: 'Varies by program. Most Legal Services Corporation grantees serve ≤125–200% FPL.',
     apply: 'Enter your ZIP at lawhelp.org to find local programs; or call 2-1-1 for legal referral.',
-    phone: '211', web: 'https://www.lawhelp.org',
+    phone: '', web: 'https://www.lawhelp.org',
     criteria: { fplMax: 200 }
   },
   {
@@ -1139,7 +1139,7 @@ const RESOURCES = [
     desc: 'Statewide network (MidPenn, Laurel, Neighborhood, North Penn, Northwestern, Legal Aid of SE PA, etc.) covering housing, public benefits, domestic violence, consumer, senior, and Medicaid/Medicare appeals.',
     eligibility: 'Generally ≤125% FPL (higher for seniors and some matters).',
     apply: 'Call PA Legal Aid hotline or apply online at palawhelp.org.',
-    phone: '1-800-322-7572', web: 'https://www.palegalaid.net',
+    phone: '', web: 'https://www.palegalaid.net',
     criteria: { fplMax: 200 }
   },
   {
@@ -1149,7 +1149,7 @@ const RESOURCES = [
     desc: 'Philadelphia-based free legal services in benefits (SSI/SSDI, SNAP, Medicaid), employment, family, homeownership, consumer, and immigration.',
     eligibility: '≤200% FPL for most matters; Philadelphia residents.',
     apply: 'Call CLS intake or walk in at 1424 Chestnut St or 1410 W. Erie Ave.',
-    phone: '215-981-3700', web: 'https://clsphila.org',
+    phone: '', web: 'https://clsphila.org',
     criteria: { fplMax: 200 }
   },
   {
@@ -1159,7 +1159,7 @@ const RESOURCES = [
     desc: 'Specialized legal help for Medicaid/CHIP/Medicare appeals, long-term care coverage, managed-care disputes, and health-related benefits for PA residents.',
     eligibility: 'PA resident with health coverage issue; no strict income cutoff.',
     apply: 'Call helpline; intake screens by issue type.',
-    phone: '1-800-274-3258', web: 'https://www.phlp.org',
+    phone: '', web: 'https://www.phlp.org',
     criteria: {}
   },
   {
@@ -1169,7 +1169,7 @@ const RESOURCES = [
     desc: 'Statewide nonprofit covering housing, benefits, family, consumer, veterans, senior legal, and farm-worker issues.',
     eligibility: '≤125% FPL for most matters (higher for seniors 60+ and some issues).',
     apply: 'Call statewide intake or visit one of 12 regional offices.',
-    phone: '1-866-635-2948', web: 'https://www.mdlab.org',
+    phone: '', web: 'https://www.mdlab.org',
     criteria: { fplMax: 200 }
   },
   {
@@ -1179,7 +1179,7 @@ const RESOURCES = [
     desc: 'Statewide coverage via regional programs. Housing, benefits, family, consumer, immigration, disability, and veterans. Also runs LSNJLAW^SM self-help site.',
     eligibility: '≤200% FPL typically.',
     apply: 'Call LSNJ intake hotline or apply online at lsnjlawhotline.org.',
-    phone: '1-888-576-5529', web: 'https://www.lsnj.org',
+    phone: '', web: 'https://www.lsnj.org',
     criteria: { fplMax: 200 }
   },
   {
@@ -1189,7 +1189,7 @@ const RESOURCES = [
     desc: 'Delaware\'s free civil legal aid. Fair Housing, Disabilities Law, Elder Law, and general Legal Services Corporation program.',
     eligibility: '≤200% FPL for most; disability and elder services have separate criteria.',
     apply: 'Call the central intake line.',
-    phone: '1-302-575-0660', web: 'https://www.declasi.org',
+    phone: '', web: 'https://www.declasi.org',
     criteria: { fplMax: 200 }
   },
   {
@@ -1199,7 +1199,7 @@ const RESOURCES = [
     desc: 'Eight regional legal aid programs plus Virginia Poverty Law Center. Housing, benefits, family, consumer, immigration, and disability.',
     eligibility: '≤125% FPL for most matters.',
     apply: 'Call Virginia Legal Aid Line or use valegalaid.org zip-code lookup.',
-    phone: '1-866-534-5243', web: 'https://www.valegalaid.org',
+    phone: '', web: 'https://www.valegalaid.org',
     criteria: { fplMax: 200 }
   },
   {
@@ -1209,7 +1209,7 @@ const RESOURCES = [
     desc: 'DC Legal Aid Society, Legal Counsel for the Elderly (AARP), Bread for the City Legal, Neighborhood Legal Services Program — full civil legal aid coverage.',
     eligibility: '≤200% FPL (LCE serves DC residents 60+ regardless of income for some matters).',
     apply: 'Call DC Legal Aid intake.',
-    phone: '202-628-1161', web: 'https://www.legalaiddc.org',
+    phone: '', web: 'https://www.legalaiddc.org',
     criteria: { fplMax: 200 }
   },
   {
@@ -1305,7 +1305,7 @@ const RESOURCES = [
     desc: 'Free 24/7 hotline and web directory for local health and human service resources — rent/utility help, food, clothing, childcare, MH crisis, and more. Operated regionally (United Way in most areas).',
     eligibility: 'No eligibility — available to anyone.',
     apply: 'Dial 2-1-1 or text your ZIP to 898211 (most regions); visit 211.org.',
-    phone: '211', web: 'https://www.211.org',
+    phone: '', web: 'https://www.211.org',
     criteria: {}
   },
   {
@@ -1325,7 +1325,7 @@ const RESOURCES = [
     desc: 'Local Salvation Army corps provide rent, utility, food, clothing, prescription, and holiday assistance. Amounts and programs vary by location.',
     eligibility: 'Typically low-income with documented need. No religious requirement.',
     apply: 'Call local corps office or dial 2-1-1 for nearest location.',
-    phone: '1-800-725-2769', web: 'https://www.salvationarmyusa.org',
+    phone: '', web: 'https://www.salvationarmyusa.org',
     criteria: { fplMax: 200 }
   },
   {
@@ -1357,7 +1357,7 @@ const RESOURCES = [
     desc: 'Comprehensive medical, mental health, dental (for some), vision, Rx, and long-term care through VA facilities or community care. Enrollment tiered by service-connection and income.',
     eligibility: 'Veteran with qualifying discharge; priority groups by service-connected disability, POW status, Purple Heart, income (VA means test), etc.',
     apply: 'Apply form 10-10EZ online at va.gov or at any VA medical center enrollment office.',
-    phone: '1-877-222-8387', web: 'https://www.va.gov/health-care/',
+    phone: '', web: 'https://www.va.gov/health-care/',
     criteria: { hasAny: ['veteran'] }
   },
   {
@@ -1367,7 +1367,7 @@ const RESOURCES = [
     desc: 'Tax-free monthly pension for wartime veterans (and surviving spouses) age 65+ or permanently disabled. With Aid & Attendance, MAPR for a single veteran is $29,093/yr ($2,424/mo) in 2026; higher with dependents.',
     eligibility: 'Wartime service (at least 90 days active duty, one during wartime period); age 65+ OR permanent disability; income/net worth below limits (2026 net worth cap $163,699).',
     apply: 'Apply via va.gov, VA Regional Office, or accredited VSO (AMVETS, DAV, American Legion, VFW).',
-    phone: '1-800-827-1000', web: 'https://www.va.gov/pension/',
+    phone: '', web: 'https://www.va.gov/pension/',
     criteria: { hasAny: ['veteran'] }
   },
   {
@@ -1377,7 +1377,7 @@ const RESOURCES = [
     desc: 'Program of Comprehensive Assistance for Family Caregivers (PCAFC) provides stipend, health insurance (CHAMPVA), training, respite, and mental health support to primary family caregivers of eligible veterans.',
     eligibility: 'Veteran with ≥70% service-connected disability needing 6+ months of personal-care services; primary caregiver is family member.',
     apply: 'Apply at va.gov/caregiver or call Caregiver Support Line.',
-    phone: '1-855-260-3274', web: 'https://www.caregiver.va.gov',
+    phone: '', web: 'https://www.caregiver.va.gov',
     criteria: { hasAny: ['veteran','caregiver'] }
   },
   {
@@ -1387,7 +1387,7 @@ const RESOURCES = [
     desc: 'Free, confidential 24/7 crisis support for veterans, service members, and their loved ones. Connected through 988.',
     eligibility: 'No eligibility — open to any veteran, service member, National Guard/Reserve, or family member.',
     apply: 'Dial 988 and press 1, or text 838255, or chat at veteranscrisisline.net.',
-    phone: '988', web: 'https://www.veteranscrisisline.net',
+    phone: '', web: 'https://www.veteranscrisisline.net',
     criteria: {}
   },
 
@@ -1399,7 +1399,7 @@ const RESOURCES = [
     desc: 'Immigration legal services, refugee resettlement, and case management. Naturalization, asylum, U-visa/VAWA, TPS, DACA, family petitions.',
     eligibility: 'Immigrant or refugee residing in PA; sliding-scale or free.',
     apply: 'Call intake line.',
-    phone: '215-832-0900', web: 'https://hiaspa.org',
+    phone: '', web: 'https://hiaspa.org',
     criteria: {}
   },
   {
@@ -1409,7 +1409,7 @@ const RESOURCES = [
     desc: 'Immigration legal, workforce, health, tenant rights, and English classes. Large regional presence in DMV and PA.',
     eligibility: 'Immigrant workers and families; most services free or sliding-scale.',
     apply: 'Call or visit welcome center in Silver Spring, Hyattsville, Baltimore, Langley Park, Woodbridge, Manassas, York, Allentown, or DC.',
-    phone: '1-855-626-4272', web: 'https://wearecasa.org',
+    phone: '', web: 'https://wearecasa.org',
     criteria: {}
   },
   {
@@ -1431,7 +1431,7 @@ const RESOURCES = [
     desc: 'Free/low-cost rides to Medicaid-covered medical appointments for PA Medicaid members. Operated by county — each county has its own broker/provider.',
     eligibility: 'PA Medicaid (Medical Assistance) recipient; trip to an MA-covered service.',
     apply: 'Call your county MATP office (1-800-842-2020 for list) at least 3 business days before appointment.',
-    phone: '1-800-842-2020', web: 'https://www.pa.gov/en/agencies/dhs/resources/transportation/medical-assistance-transportation-program.html',
+    phone: '', web: 'https://www.pa.gov/en/agencies/dhs/resources/transportation/medical-assistance-transportation-program.html',
     criteria: { insurance: ['medicaid'] }
   },
   {
@@ -1441,7 +1441,7 @@ const RESOURCES = [
     desc: 'ADA complementary paratransit for people with disabilities within 3/4 mile of NJ Transit bus routes. Advance reservation required.',
     eligibility: 'Functional disability that prevents fixed-route use; certification required.',
     apply: 'Call Access Link to start certification (interview + sometimes functional assessment).',
-    phone: '1-800-955-2321', web: 'https://www.njtransit.com/accessibility/access-link',
+    phone: '', web: 'https://www.njtransit.com/accessibility/access-link',
     criteria: { hasAny: ['disabled'] }
   },
   {
@@ -1451,7 +1451,7 @@ const RESOURCES = [
     desc: 'Baltimore region ADA paratransit for certified riders. Also operates Call-A-Ride and partners with Taxi Access.',
     eligibility: 'Functional disability preventing fixed-route use; certification required.',
     apply: 'Apply for certification through MTA Mobility Certification Office.',
-    phone: '410-764-8181', web: 'https://www.mta.maryland.gov/mobility',
+    phone: '', web: 'https://www.mta.maryland.gov/mobility',
     criteria: { hasAny: ['disabled'] }
   },
   {
@@ -1461,7 +1461,7 @@ const RESOURCES = [
     desc: 'Statewide ADA paratransit for Delaware residents with disabilities.',
     eligibility: 'Delaware resident with certified disability preventing fixed-route use.',
     apply: 'Call DART Paratransit for application packet.',
-    phone: '1-800-553-3278', web: 'https://www.dartfirststate.com/information/services/paratransit/',
+    phone: '', web: 'https://www.dartfirststate.com/information/services/paratransit/',
     criteria: { hasAny: ['disabled'] }
   },
   {
@@ -1471,7 +1471,7 @@ const RESOURCES = [
     desc: 'ADA paratransit covering DC, Montgomery/Prince George\'s MD, and Arlington/Fairfax/Alexandria/Falls Church VA. Shared ride, door-to-door.',
     eligibility: 'Certified disability; reside/travel within WMATA service area.',
     apply: 'Complete eligibility application + in-person assessment.',
-    phone: '202-962-2700', web: 'https://www.wmata.com/service/accessibility/metro-access/',
+    phone: '', web: 'https://www.wmata.com/service/accessibility/metro-access/',
     criteria: { hasAny: ['disabled'] }
   },
   {
@@ -1503,7 +1503,7 @@ const RESOURCES = [
     desc: 'Limited-grant copay assistance for specific cancer diagnoses (varies — funds open/close), plus free counseling, support groups, and small grants for transportation, home care, and child care during treatment.',
     eligibility: 'Cancer diagnosis matching an open fund; income generally ≤500% FPL; insured for the medication.',
     apply: 'Check open funds and apply at cancercare.org/copayfoundation, or call.',
-    phone: '1-800-813-4673', web: 'https://www.cancercare.org',
+    phone: '', web: 'https://www.cancercare.org',
     criteria: { fplMax: 500, dx: ['cancer_any','cancer_breast','cancer_lung','cancer_blood'] }
   },
   {
@@ -1513,7 +1513,7 @@ const RESOURCES = [
     desc: 'Direct copay grants for ~30 disease funds (many cancers, autoimmune, MS, Alzheimer\'s, heart failure, sickle cell, etc.). Also runs MedCareLine and case management.',
     eligibility: 'Insured (covers the drug); income ≤400% FPL (some funds higher); diagnosis matches an open fund.',
     apply: 'Apply at copays.org or call. Funds open/close — check first.',
-    phone: '1-866-512-3861', web: 'https://www.copays.org',
+    phone: '', web: 'https://www.copays.org',
     criteria: { fplMax: 500, insuranceExclude: ['uninsured'],
       dx: ['cancer_any','cancer_breast','cancer_lung','cancer_blood','autoimmune','ms','alzheimers','heart','sickle','rare','copd','parkinsons'] }
   },
@@ -1524,7 +1524,7 @@ const RESOURCES = [
     desc: 'Copay assistance (annual grants up to $10K+ depending on dx fund), Patient Aid grants ($100), Susan Lang Pay-It-Forward travel fund, and Information Resource Center.',
     eligibility: 'Blood cancer diagnosis (leukemia, lymphoma, myeloma, MDS, MPN). Income ≤500% FPL for most copay funds; Patient Aid open to anyone with blood cancer.',
     apply: 'Apply at lls.org/copay; Patient Aid via lls.org/financial-support.',
-    phone: '1-877-557-2672', web: 'https://www.lls.org',
+    phone: '', web: 'https://www.lls.org',
     criteria: { dx: ['cancer_blood','cancer_any'] }
   },
   {
@@ -1534,7 +1534,7 @@ const RESOURCES = [
     desc: 'Direct payments to landlords/utilities/grocers for families navigating cancer costs. Also financial education, telephone case management, and resource navigation.',
     eligibility: 'Patient (any age) actively in cancer treatment OR within 1 year post-treatment; financial hardship.',
     apply: 'Provider-initiated referral via familyreach.org (or social worker/case manager).',
-    phone: '1-857-233-2764', web: 'https://familyreach.org',
+    phone: '', web: 'https://familyreach.org',
     criteria: { dx: ['cancer_any','cancer_breast','cancer_lung','cancer_blood'] }
   },
   {
@@ -1544,7 +1544,7 @@ const RESOURCES = [
     desc: 'Helpline + financial assistance program (limited grants for treatment-related expenses) and breast cancer screening/diagnostic navigation.',
     eligibility: 'Breast cancer diagnosis (or actively in diagnostic workup for grants); income ≤300% FPL typically.',
     apply: 'Call Komen Helpline weekdays; web intake at komen.org.',
-    phone: '1-877-465-6636', web: 'https://www.komen.org/support-resources/',
+    phone: '', web: 'https://www.komen.org/support-resources/',
     criteria: { dx: ['cancer_breast','cancer_any'] }
   },
   {
@@ -1554,7 +1554,7 @@ const RESOURCES = [
     desc: 'Health Insurance Premium Program: pays Medicare/private/Marketplace premiums for dialysis or transplant patients with financial need. Also grants for ESRD-related expenses.',
     eligibility: 'On dialysis or transplant; ≤400% FPL; not eligible for Medicaid that fully pays the premium.',
     apply: 'Provider/social worker initiates application at kidneyfund.org/hipp.',
-    phone: '1-800-638-8299', web: 'https://www.kidneyfund.org',
+    phone: '', web: 'https://www.kidneyfund.org',
     criteria: { fplMax: 400, dx: ['esrd','transplant'] }
   },
   {
@@ -1564,7 +1564,7 @@ const RESOURCES = [
     desc: 'Equipment loan closets (wheelchairs, AAC devices, hospital beds), respite/home care grants, ALS-specialty clinic referral, and certified caregiver navigation.',
     eligibility: 'ALS diagnosis. Most services free regardless of income (equipment loans, support groups, clinic care); financial grants need-based.',
     apply: 'Contact your regional ALS Association chapter via als.org.',
-    phone: '1-800-782-4747', web: 'https://www.als.org',
+    phone: '', web: 'https://www.als.org',
     criteria: { dx: ['als'] }
   },
   {
@@ -1574,7 +1574,7 @@ const RESOURCES = [
     desc: 'Helpline (multilingual) for symptom/medication questions, hospital safety kit (Aware-in-Care), care navigation, and local chapter referral. Limited respite-grant network via affiliates.',
     eligibility: "Parkinson's disease diagnosis or caregiver; no income requirement for helpline/navigation.",
     apply: 'Call helpline or visit parkinson.org.',
-    phone: '1-800-473-4636', web: 'https://www.parkinson.org',
+    phone: '', web: 'https://www.parkinson.org',
     criteria: { dx: ['parkinsons'] }
   },
   {
@@ -1584,7 +1584,7 @@ const RESOURCES = [
     desc: 'Need-based grants for emergency expenses (rent/utilities/cooling), home/auto adaptations, and care services. Plus MS Navigator (1:1 case mgr) and MS-specialty clinic referral.',
     eligibility: 'MS diagnosis; financial need; specific grants have varying eligibility (income, assets, urgency).',
     apply: 'Call MS Navigator or apply at nationalmssociety.org/financial-assistance.',
-    phone: '1-800-344-4867', web: 'https://www.nationalmssociety.org',
+    phone: '', web: 'https://www.nationalmssociety.org',
     criteria: { dx: ['ms'] }
   },
   {
@@ -1594,7 +1594,7 @@ const RESOURCES = [
     desc: 'Local member-org navigation (~50 chapters), advocacy, drug-trial referral, and emergency assistance funds via local chapters.',
     eligibility: 'Sickle cell diagnosis (or trait carrier for some services).',
     apply: 'Find local member organization at sicklecelldisease.org.',
-    phone: '1-800-421-8453', web: 'https://www.sicklecelldisease.org',
+    phone: '', web: 'https://www.sicklecelldisease.org',
     criteria: { dx: ['sickle'] }
   },
   {
@@ -1604,7 +1604,7 @@ const RESOURCES = [
     desc: 'Insurance navigation, product safety hotline, scholarship, and HANDI info center. Local chapters offer emergency assistance.',
     eligibility: 'Hemophilia A/B, von Willebrand disease, or other bleeding disorder.',
     apply: 'Find local chapter at bleeding.org.',
-    phone: '1-800-424-2634', web: 'https://www.bleeding.org',
+    phone: '', web: 'https://www.bleeding.org',
     criteria: { dx: ['hemophilia'] }
   },
   {
@@ -1614,7 +1614,7 @@ const RESOURCES = [
     desc: 'CF-specialist case management — insurance, financial, legal, and CF center navigation. Also runs the Patient Assistance program for Trikafta and other modulators.',
     eligibility: 'Cystic fibrosis diagnosis.',
     apply: 'Email/call Compass at cff.org/compass.',
-    phone: '1-844-266-7277', web: 'https://www.cff.org/managing-cf/cf-foundation-compass',
+    phone: '', web: 'https://www.cff.org/managing-cf/cf-foundation-compass',
     criteria: { dx: ['cf'] }
   },
   {
@@ -1624,7 +1624,7 @@ const RESOURCES = [
     desc: '1:1 educator support, oxygen-equipment guidance, pulmonary-rehab finder, and COPD360social patient community.',
     eligibility: 'COPD or chronic respiratory diagnosis; no income test for information services.',
     apply: 'Call C.O.P.D. Information Line.',
-    phone: '1-866-316-2673', web: 'https://www.copdfoundation.org',
+    phone: '', web: 'https://www.copdfoundation.org',
     criteria: { dx: ['copd'] }
   },
   {
@@ -1634,7 +1634,7 @@ const RESOURCES = [
     desc: '24/7 multilingual helpline staffed by clinicians/social workers, free care consultations, MedicAlert + Safe Return enrollment, and local chapter respite/grants.',
     eligibility: "Alzheimer's or other dementia diagnosis (or caregiver thereof); no income test for helpline.",
     apply: 'Call 24/7 helpline.',
-    phone: '1-800-272-3900', web: 'https://www.alz.org',
+    phone: '', web: 'https://www.alz.org',
     criteria: { dx: ['alzheimers'] }
   },
   {
@@ -1644,7 +1644,7 @@ const RESOURCES = [
     desc: 'Mental health information, peer-led support groups, family-to-family education, and crisis-resource referral. Local affiliates often run respite, advocacy, and re-entry programs.',
     eligibility: 'Anyone with a mental-health concern (patient or family); no eligibility for helpline.',
     apply: 'Call HelpLine M–F 10am–10pm ET, text "HelpLine" to 62640, or chat at nami.org.',
-    phone: '1-800-950-6264', web: 'https://www.nami.org',
+    phone: '', web: 'https://www.nami.org',
     criteria: { dx: ['smi'] }
   },
   {
@@ -1654,7 +1654,7 @@ const RESOURCES = [
     desc: 'Disease-specific patient assistance programs (insurance premium, copay, diagnostic testing, travel, medical food), plus rare-disease database and clinical-trial finder.',
     eligibility: 'Diagnosis matching an open NORD fund (~20+ rare diseases); income ≤500% FPL typically.',
     apply: 'Search open programs at rarediseases.org/patient-assistance-programs.',
-    phone: '1-203-744-0100', web: 'https://rarediseases.org',
+    phone: '', web: 'https://rarediseases.org',
     criteria: { fplMax: 500, dx: ['rare'] }
   },
   {
@@ -1664,7 +1664,7 @@ const RESOURCES = [
     desc: 'Tax-deductible community-fundraising platform for organ transplant, brain/spinal cord injury, or other catastrophic medical expenses. Funds are managed by HHL and paid to vendors.',
     eligibility: 'Transplant candidate/recipient OR catastrophic injury (TBI/SCI/severe burns).',
     apply: 'Apply at helphopelive.org; full setup once approved.',
-    phone: '1-800-642-8399', web: 'https://helphopelive.org',
+    phone: '', web: 'https://helphopelive.org',
     criteria: { dx: ['transplant'] }
   },
   {
@@ -1674,7 +1674,7 @@ const RESOURCES = [
     desc: 'Direct-effect grants up to $25K for organizations + Paralysis Resource Center (free 1:1 information specialist for people living with paralysis and their families).',
     eligibility: 'Paralysis (SCI, stroke, MS, ALS, cerebral palsy, or other). Information services free; financial grants flow through nonprofits.',
     apply: 'Call PRC information specialist or visit christopherreeve.org.',
-    phone: '1-800-539-7309', web: 'https://www.christopherreeve.org',
+    phone: '', web: 'https://www.christopherreeve.org',
     criteria: {},
     custom: p => (p.dx && (p.dx.has('rare') || p.flags.has('disabled'))) ? 'maybe' : 'maybe'
   },
