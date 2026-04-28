@@ -1002,6 +1002,68 @@ const RESOURCES = [
     phone: '', web: 'https://www.medicaid.gov',
     criteria: { fplMax: 138, citizenshipExclude: ['undocumented','visa','tps','daca'] }
   },
+
+  // --- Medicaid Buy-In / Workers with Disabilities (one per state) ---
+  {
+    id: 'pa-mawd', category: 'insurance', scope: 'state',
+    name: 'PA MAWD (Medical Assistance for Workers with Disabilities)',
+    states: ['PA'],
+    desc: 'Medicaid for working Pennsylvanians with disabilities. Higher income limit than standard Medicaid; participants pay a small monthly premium (5% of countable income).',
+    eligibility: 'PA resident; age 16–64; SSA-determined disability (or state medical review); working with earned income; countable income ≤250% FPL; resources ≤$10,000.',
+    apply: 'Apply via COMPASS or local County Assistance Office.',
+    phone: '', web: 'https://www.dhs.pa.gov/Services/Disabilities/Pages/MAWD.aspx',
+    criteria: { ageMin: 16, ageMax: 64, fplMax: 250, hasAny: ['disabled'], incomeSources: ['employment','selfemp'], citizenshipExclude: ['undocumented','visa','tps','daca'] }
+  },
+  {
+    id: 'nj-workability', category: 'insurance', scope: 'state',
+    name: 'NJ WorkAbility',
+    states: ['NJ'],
+    desc: 'NJ Medicaid Buy-In for working adults with disabilities. Same comprehensive coverage as NJ FamilyCare; sliding-scale premium based on earnings.',
+    eligibility: 'NJ resident; age 16–64; permanent disability; employed (any hours); unearned income ≤250% FPL; no upper cap on earned income.',
+    apply: 'Apply via NJ FamilyCare with a WorkAbility addendum.',
+    phone: '', web: 'https://www.nj.gov/humanservices/dmahs/clients/njfc-workability.html',
+    criteria: { ageMin: 16, ageMax: 64, hasAny: ['disabled'], incomeSources: ['employment','selfemp'], citizenshipExclude: ['undocumented','visa','tps','daca'] }
+  },
+  {
+    id: 'md-eid', category: 'insurance', scope: 'state',
+    name: 'MD EID (Employed Individuals with Disabilities)',
+    states: ['MD'],
+    desc: 'Maryland Medicaid Buy-In for working adults with disabilities. Comprehensive Medicaid coverage; income-based monthly premium (typically $25–$55).',
+    eligibility: 'MD resident; age 18–64; SSA-disabled or state determination; earning income from work; countable income ≤300% FPL; non-retirement resources ≤$10,000 (individual).',
+    apply: 'Apply via Maryland Health Connection or local DSS.',
+    phone: '', web: 'https://health.maryland.gov/mmcp/longtermcare/Pages/Employed-Individuals-with-Disabilities-Program.aspx',
+    criteria: { ageMin: 18, ageMax: 64, fplMax: 300, hasAny: ['disabled'], incomeSources: ['employment','selfemp'], citizenshipExclude: ['undocumented','visa','tps','daca'] }
+  },
+  {
+    id: 'de-wdma', category: 'insurance', scope: 'state',
+    name: 'DE Workers with Disabilities Medicaid (WDMA)',
+    states: ['DE'],
+    desc: 'Delaware Medicaid Buy-In for working adults with disabilities. Comprehensive coverage with a small premium based on income.',
+    eligibility: 'DE resident; age 16–64; SSA-disabled or state determination; employed with earned income; countable income ≤275% FPL.',
+    apply: 'Apply via Delaware ASSIST or Division of Medicaid & Medical Assistance.',
+    phone: '', web: 'https://dhss.delaware.gov/dhss/dmma/',
+    criteria: { ageMin: 16, ageMax: 64, fplMax: 275, hasAny: ['disabled'], incomeSources: ['employment','selfemp'], citizenshipExclude: ['undocumented','visa','tps','daca'] }
+  },
+  {
+    id: 'va-medicaid-works', category: 'insurance', scope: 'state',
+    name: 'VA Medicaid Works',
+    states: ['VA'],
+    desc: 'Virginia Medicaid Buy-In for working adults with disabilities. Allows workers to keep Medicaid as earnings rise.',
+    eligibility: 'VA resident; age 16–64; SSA-disabled or eligible for SSI/SSDI; employed (any hours); earned income ≤80% of state median; unearned income ≤SSI FBR.',
+    apply: 'Apply via CommonHelp or local Department of Social Services.',
+    phone: '', web: 'https://www.dmas.virginia.gov/for-members/medicaid-works/',
+    criteria: { ageMin: 16, ageMax: 64, hasAny: ['disabled'], incomeSources: ['employment','selfemp'], citizenshipExclude: ['undocumented','visa','tps','daca'] }
+  },
+  {
+    id: 'dc-medicaid-buyin', category: 'insurance', scope: 'state',
+    name: 'DC Medicaid Buy-In for Working People with Disabilities',
+    states: ['DC'],
+    desc: 'DC Medicaid Buy-In for working adults with disabilities. Comprehensive coverage with sliding-scale premium.',
+    eligibility: 'DC resident; age 18–64; SSA-disabled or comparable state determination; working with earned income; net family income ≤300% FPL.',
+    apply: 'Apply via DC Health Link or DHS Economic Security Administration.',
+    phone: '', web: 'https://dhcf.dc.gov/service/medicaid',
+    criteria: { ageMin: 18, ageMax: 64, fplMax: 300, hasAny: ['disabled'], incomeSources: ['employment','selfemp'], citizenshipExclude: ['undocumented','visa','tps','daca'] }
+  },
   {
     id: 'chip', category: 'insurance', scope: 'state',
     name: 'CHIP — Children\'s Health Insurance',
@@ -1280,19 +1342,95 @@ const RESOURCES = [
     phone: '', web: 'https://dhr.maryland.gov/temporary-cash-assistance/',
     criteria: { hasAny: ['disabled'] }
   },
+  // --- Medicaid LTSS / MLTSS (one per state; replaces combined HCBS card) ---
   {
-    id: 'hcbs', category: 'income', scope: 'state',
-    name: 'Medicaid HCBS Waivers (Home & Community-Based Services)',
-    states: 'ALL',
-    desc: 'Medicaid waivers that fund personal care, adult day, respite, home mods, transportation, and other supports to keep people out of facilities. PA: OLTL waivers. NJ: MLTSS. MD: Community First / Community Options. DE: DSAAPD. VA: CCC Plus. DC: EPD Waiver.',
-    eligibility: 'Nursing-facility level of care + Medicaid financial eligibility (income typically ≤300% SSI FBR ≈ $2,982/mo in 2026). Varies by waiver.',
-    apply: 'Start with state Medicaid office or Area Agency on Aging / No Wrong Door / ADRC.',
-    phone: '', web: 'https://www.medicaid.gov/medicaid/home-community-based-services/',
-    criteria: { hasAny: ['disabled','chronic'] },
+    id: 'pa-chc', category: 'income', scope: 'state',
+    name: 'PA Community HealthChoices (CHC)',
+    states: ['PA'],
+    desc: 'PA managed long-term services and supports for adults dually eligible (Medicare + Medicaid) or needing nursing-facility level of care. Covers HCBS (personal care, adult day, respite, home mods) and nursing facility care.',
+    eligibility: 'Age 21+; PA resident; nursing-facility level of care OR dually eligible; Medicaid financial eligibility (income ≤300% SSI FBR ≈ $2,982/mo in 2026 for HCBS).',
+    apply: 'Apply via PA Independent Enrollment Broker or local Area Agency on Aging.',
+    phone: '', web: 'https://www.dhs.pa.gov/HealthChoices/HC-Services/Pages/Community-HealthChoices.aspx',
+    criteria: { ageMin: 21 },
     custom: p => {
       if (p.housing === 'ltc' || p.housing === 'alf') return 'yes';
       if (p.flags.has('disabled') || (p.age !== null && p.age >= 65)) return 'maybe';
-      return 'maybe';
+      return 'no';
+    }
+  },
+  {
+    id: 'nj-mltss', category: 'income', scope: 'state',
+    name: 'NJ MLTSS (Managed Long-Term Services & Supports)',
+    states: ['NJ'],
+    desc: 'NJ FamilyCare program providing comprehensive long-term services through Medicaid managed care. Covers nursing facility, assisted living, adult day, personal care, home health, and other HCBS.',
+    eligibility: 'NJ resident; age 65+ OR disabled (any age); needs nursing-facility level of care; Medicaid financial eligibility (≤300% SSI FBR ≈ $2,982/mo in 2026; resources ≤$2,000 individual).',
+    apply: 'Start with NJ FamilyCare or local Office on Aging / ADRC.',
+    phone: '', web: 'https://www.state.nj.us/humanservices/dmahs/clients/njmltss.html',
+    criteria: {},
+    custom: p => {
+      if (p.housing === 'ltc' || p.housing === 'alf') return 'yes';
+      if (p.flags.has('disabled') || (p.age !== null && p.age >= 65)) return 'maybe';
+      return 'no';
+    }
+  },
+  {
+    id: 'md-cfc', category: 'income', scope: 'state',
+    name: 'MD Community First Choice + Community Options Waiver',
+    states: ['MD'],
+    desc: 'Maryland HCBS programs that fund personal assistance, supports planning, home modifications, and assistive technology. CFC is a state-plan benefit; Community Options is a 1915(c) waiver for higher-needs individuals.',
+    eligibility: 'MD resident; nursing-facility level of care; Medicaid financial eligibility (income ≤300% SSI FBR for waiver; CFC follows state-plan Medicaid limits).',
+    apply: 'Apply via Maryland Access Point or local Area Agency on Aging.',
+    phone: '', web: 'https://health.maryland.gov/mmcp/longtermcare/Pages/Home.aspx',
+    criteria: {},
+    custom: p => {
+      if (p.housing === 'ltc' || p.housing === 'alf') return 'yes';
+      if (p.flags.has('disabled') || (p.age !== null && p.age >= 65)) return 'maybe';
+      return 'no';
+    }
+  },
+  {
+    id: 'de-dshp-plus', category: 'income', scope: 'state',
+    name: 'DE Diamond State Health Plan-Plus (DSHP-Plus)',
+    states: ['DE'],
+    desc: 'Delaware Medicaid managed care program for individuals needing long-term care. Includes nursing facility, HCBS, and acute care; replaces the older Elderly & Disabled and Acquired Brain Injury Waivers.',
+    eligibility: 'DE resident; age 65+ OR disabled with skilled-care needs; Medicaid financial eligibility (income ≤300% SSI FBR for HCBS; institutional rules differ).',
+    apply: 'Apply via Delaware ASSIST or Division of Services for Aging & Adults with Physical Disabilities.',
+    phone: '', web: 'https://dhss.delaware.gov/dhss/dmma/dshpplus.html',
+    criteria: {},
+    custom: p => {
+      if (p.housing === 'ltc' || p.housing === 'alf') return 'yes';
+      if (p.flags.has('disabled') || (p.age !== null && p.age >= 65)) return 'maybe';
+      return 'no';
+    }
+  },
+  {
+    id: 'va-cardinal-care', category: 'income', scope: 'state',
+    name: 'VA Cardinal Care (formerly CCC Plus)',
+    states: ['VA'],
+    desc: 'Virginia managed Medicaid program serving dual-eligibles, individuals on EDCD or Tech Waivers, and people in nursing facilities. Provides care coordination plus acute, behavioral, and long-term care.',
+    eligibility: 'VA resident; age 65+ OR disabled; needs nursing-facility level of care OR EDCD/Tech Waiver eligible; Medicaid financial eligibility.',
+    apply: 'Apply via CommonHelp or call Cover Virginia.',
+    phone: '', web: 'https://www.dmas.virginia.gov/for-members/programs-and-initiatives/cardinal-care/',
+    criteria: {},
+    custom: p => {
+      if (p.housing === 'ltc' || p.housing === 'alf') return 'yes';
+      if (p.flags.has('disabled') || (p.age !== null && p.age >= 65)) return 'maybe';
+      return 'no';
+    }
+  },
+  {
+    id: 'dc-epd', category: 'income', scope: 'state',
+    name: 'DC Elderly & Persons with Physical Disabilities (EPD) Waiver',
+    states: ['DC'],
+    desc: 'DC Medicaid waiver providing personal care, respite, adult day, case management, and other HCBS to keep individuals in the community rather than nursing facilities.',
+    eligibility: 'DC resident; age 65+ OR physically disabled (any age); nursing-facility level of care; Medicaid financial eligibility (income ≤300% SSI FBR).',
+    apply: 'Apply via DC Aging & Disability Resource Center or DC Department of Health Care Finance.',
+    phone: '', web: 'https://dhcf.dc.gov/service/elderly-persons-physical-disabilities-epd-waiver',
+    criteria: {},
+    custom: p => {
+      if (p.housing === 'ltc' || p.housing === 'alf') return 'yes';
+      if (p.flags.has('disabled') || (p.age !== null && p.age >= 65)) return 'maybe';
+      return 'no';
     }
   },
 
