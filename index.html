@@ -1668,17 +1668,6 @@ const RESOURCES = [
     criteria: { dx: ['transplant'] }
   },
   {
-    id: 'reeve', category: 'disease', scope: 'federal',
-    name: 'Christopher & Dana Reeve Foundation — Quality of Life Grants',
-    states: 'ALL',
-    desc: 'Direct-effect grants up to $25K for organizations + Paralysis Resource Center (free 1:1 information specialist for people living with paralysis and their families).',
-    eligibility: 'Paralysis (SCI, stroke, MS, ALS, cerebral palsy, or other). Information services free; financial grants flow through nonprofits.',
-    apply: 'Call PRC information specialist or visit christopherreeve.org.',
-    phone: '', web: 'https://www.christopherreeve.org',
-    criteria: {},
-    custom: p => (p.dx && (p.dx.has('rare') || p.flags.has('disabled'))) ? 'maybe' : 'maybe'
-  },
-  {
     id: 'insulin-savings', category: 'disease', scope: 'federal',
     name: 'Insulin $35 Cap + Manufacturer Savings (Lilly / Novo / Sanofi)',
     states: 'ALL',
