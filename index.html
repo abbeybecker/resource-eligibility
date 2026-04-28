@@ -1055,8 +1055,7 @@ const RESOURCES = [
     eligibility: 'HIV diagnosis; income typically ≤500% FPL (state-specific); uninsured or underinsured.',
     apply: 'Contact state ADAP office or Ryan White Part B provider.',
     phone: '', web: 'https://ryanwhite.hrsa.gov',
-    requiresDx: true,
-    criteria: { fplMax: 500, hasAny: ['hiv'] }
+    criteria: { fplMax: 500, dx: ['hiv'] }
   },
 
   // ========== FOOD & NUTRITION ==========
@@ -1492,6 +1491,7 @@ const RESOURCES = [
     eligibility: 'Veteran using VA medical care.',
     apply: 'Contact the Voluntary Service Office at your local VA medical center.',
     phone: '', web: 'https://www.dav.org/veterans/i-need-a-ride/',
+    requiresVeteran: true,
     criteria: { hasAny: ['veteran'] }
   },
 
@@ -1821,10 +1821,6 @@ const CONTACTS = {
 
 // Always-available national hotlines (rendered as a universal footer on county panel)
 const NATIONAL_CONTACTS = [
-  { label: '2-1-1 (local health & human services)', phone: '211' },
-  { label: '988 Suicide & Crisis Lifeline', phone: '988' },
-  { label: 'Veterans Crisis Line', phone: '988 press 1 (or text 838255)' },
-  { label: 'National DV Hotline', phone: '1-800-799-7233' },
   { label: 'SSA — SSI / SSDI / retirement', phone: '1-800-772-1213' },
   { label: '1-800-MEDICARE', phone: '1-800-633-4227' },
 ];
@@ -1869,7 +1865,7 @@ function evaluate(r, p) {
   if (r.category === 'immigration' && p.citizen === 'citizen') {
     return { verdict: 'no', reasons: ['Immigration program — not applicable for US citizens'] };
   }
-  if (r.category === 'veterans' && !p.flags.has('veteran')) {
+  if ((r.category === 'veterans' || r.requiresVeteran) && !p.flags.has('veteran')) {
     return { verdict: 'no', reasons: ['Veteran-only program'] };
   }
   if (r.requiresDx && (!p.dx || p.dx.size === 0)) {
