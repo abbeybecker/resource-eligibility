@@ -851,6 +851,7 @@ const RESOURCES = [
     eligibility: 'Must have insurance covering the medication; income typically ≤500% FPL (varies by fund); diagnosis matches an open fund.',
     apply: 'Apply at healthwellfoundation.org after confirming a fund is open.',
     phone: '1-800-675-8416', web: 'https://www.healthwellfoundation.org',
+    requiresDx: true,
     criteria: { fplMax: 500, insuranceExclude: ['uninsured'], hasAny: ['chronic','cancer','hiv'] }
   },
   {
@@ -861,6 +862,7 @@ const RESOURCES = [
     eligibility: 'Medicare beneficiary (most funds); income ≤500% FPL (varies); diagnosis matches open fund.',
     apply: 'Check open funds at panfoundation.org; apply by phone or online.',
     phone: '1-866-316-7263', web: 'https://www.panfoundation.org',
+    requiresDx: true,
     criteria: { fplMax: 500, hasAny: ['chronic','cancer','hiv'] },
     custom: p => (p.hasMedicare || p.insurance.has('medicare_adv')) ? 'yes' : 'maybe'
   },
@@ -1053,6 +1055,7 @@ const RESOURCES = [
     eligibility: 'HIV diagnosis; income typically ≤500% FPL (state-specific); uninsured or underinsured.',
     apply: 'Contact state ADAP office or Ryan White Part B provider.',
     phone: '1-800-448-0440', web: 'https://ryanwhite.hrsa.gov',
+    requiresDx: true,
     criteria: { fplMax: 500, hasAny: ['hiv'] }
   },
 
@@ -1862,6 +1865,17 @@ function evaluate(r, p) {
   const reasons = [];
   let verdict = 'yes';
 
+  // Category gates: hide categories that don't apply at all
+  if (r.category === 'immigration' && p.citizen === 'citizen') {
+    return { verdict: 'no', reasons: ['Immigration program — not applicable for US citizens'] };
+  }
+  if (r.category === 'veterans' && !p.flags.has('veteran')) {
+    return { verdict: 'no', reasons: ['Veteran-only program'] };
+  }
+  if (r.requiresDx && (!p.dx || p.dx.size === 0)) {
+    return { verdict: 'no', reasons: ['Disease-specific program — select a diagnosis to see if eligible'] };
+  }
+
   // Geographic scope
   if (r.states && r.states !== 'ALL') {
     if (!p.state) { verdict = 'maybe'; reasons.push('Select state to confirm'); }
@@ -1936,15 +1950,14 @@ function evaluate(r, p) {
     if (!any) { if (verdict === 'yes') verdict = 'maybe'; reasons.push('Income source check'); }
   }
 
-  // Diagnoses (any-of)
+  // Diagnoses (any-of). With no dx selected, exclude — these are disease-specific programs.
   if (c.dx && c.dx.length) {
-    const any = c.dx.some(d => p.dx && p.dx.has(d));
-    if (!any) {
-      if (!p.dx || p.dx.size === 0) { if (verdict === 'yes') verdict = 'maybe'; reasons.push('Diagnosis match required'); }
-      else return { verdict: 'no', reasons: ['Diagnosis not in eligible list'] };
-    } else {
-      reasons.push('Diagnosis matches program');
+    if (!p.dx || p.dx.size === 0) {
+      return { verdict: 'no', reasons: ['Disease-specific program — select a diagnosis to see if eligible'] };
     }
+    const any = c.dx.some(d => p.dx.has(d));
+    if (!any) return { verdict: 'no', reasons: ['Diagnosis not in eligible list'] };
+    reasons.push('Diagnosis matches program');
   }
 
   // Custom predicate override (object return wins; 'no' wins over 'yes'; 'maybe' softens)
