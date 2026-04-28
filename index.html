@@ -1055,8 +1055,7 @@ const RESOURCES = [
     eligibility: 'HIV diagnosis; income typically ≤500% FPL (state-specific); uninsured or underinsured.',
     apply: 'Contact state ADAP office or Ryan White Part B provider.',
     phone: '', web: 'https://ryanwhite.hrsa.gov',
-    requiresDx: true,
-    criteria: { fplMax: 500, hasAny: ['hiv'] }
+    criteria: { fplMax: 500, dx: ['hiv'] }
   },
 
   // ========== FOOD & NUTRITION ==========
@@ -1299,16 +1298,6 @@ const RESOURCES = [
 
   // ========== GRANTS & EMERGENCY ASSISTANCE ==========
   {
-    id: 'twoeleven', category: 'grants', scope: 'federal',
-    name: '2-1-1 (Local Referral Hotline)',
-    states: 'ALL',
-    desc: 'Free 24/7 hotline and web directory for local health and human service resources — rent/utility help, food, clothing, childcare, MH crisis, and more. Operated regionally (United Way in most areas).',
-    eligibility: 'No eligibility — available to anyone.',
-    apply: 'Dial 2-1-1 or text your ZIP to 898211 (most regions); visit 211.org.',
-    phone: '', web: 'https://www.211.org',
-    criteria: {}
-  },
-  {
     id: 'modestneeds', category: 'grants', scope: 'federal',
     name: 'Modest Needs Foundation',
     states: 'ALL',
@@ -1492,6 +1481,7 @@ const RESOURCES = [
     eligibility: 'Veteran using VA medical care.',
     apply: 'Contact the Voluntary Service Office at your local VA medical center.',
     phone: '', web: 'https://www.dav.org/veterans/i-need-a-ride/',
+    requiresVeteran: true,
     criteria: { hasAny: ['veteran'] }
   },
 
@@ -1668,17 +1658,6 @@ const RESOURCES = [
     criteria: { dx: ['transplant'] }
   },
   {
-    id: 'reeve', category: 'disease', scope: 'federal',
-    name: 'Christopher & Dana Reeve Foundation — Quality of Life Grants',
-    states: 'ALL',
-    desc: 'Direct-effect grants up to $25K for organizations + Paralysis Resource Center (free 1:1 information specialist for people living with paralysis and their families).',
-    eligibility: 'Paralysis (SCI, stroke, MS, ALS, cerebral palsy, or other). Information services free; financial grants flow through nonprofits.',
-    apply: 'Call PRC information specialist or visit christopherreeve.org.',
-    phone: '', web: 'https://www.christopherreeve.org',
-    criteria: {},
-    custom: p => (p.dx && (p.dx.has('rare') || p.flags.has('disabled'))) ? 'maybe' : 'maybe'
-  },
-  {
     id: 'insulin-savings', category: 'disease', scope: 'federal',
     name: 'Insulin $35 Cap + Manufacturer Savings (Lilly / Novo / Sanofi)',
     states: 'ALL',
@@ -1821,10 +1800,6 @@ const CONTACTS = {
 
 // Always-available national hotlines (rendered as a universal footer on county panel)
 const NATIONAL_CONTACTS = [
-  { label: '2-1-1 (local health & human services)', phone: '211' },
-  { label: '988 Suicide & Crisis Lifeline', phone: '988' },
-  { label: 'Veterans Crisis Line', phone: '988 press 1 (or text 838255)' },
-  { label: 'National DV Hotline', phone: '1-800-799-7233' },
   { label: 'SSA — SSI / SSDI / retirement', phone: '1-800-772-1213' },
   { label: '1-800-MEDICARE', phone: '1-800-633-4227' },
 ];
@@ -1869,7 +1844,7 @@ function evaluate(r, p) {
   if (r.category === 'immigration' && p.citizen === 'citizen') {
     return { verdict: 'no', reasons: ['Immigration program — not applicable for US citizens'] };
   }
-  if (r.category === 'veterans' && !p.flags.has('veteran')) {
+  if ((r.category === 'veterans' || r.requiresVeteran) && !p.flags.has('veteran')) {
     return { verdict: 'no', reasons: ['Veteran-only program'] };
   }
   if (r.requiresDx && (!p.dx || p.dx.size === 0)) {
